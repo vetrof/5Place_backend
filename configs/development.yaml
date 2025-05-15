@@ -1,7 +1,8 @@
 database:
   host: "localhost"
-  port: "5432"
+  port: "55000"
   user: "postgres"
-  password: "postgres"
-  dbname: "myapp"
+  password: "postgrespw"
+  dbname: "place5"
   sslmode: "disable"
+  migrations_path: "./migrations"
