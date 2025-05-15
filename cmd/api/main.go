@@ -9,7 +9,7 @@ func main() {
 
 	// db init
 	// Инициализация репозитория
-	repo, err := interfaces.NewPostgresDB()
+	repo, err := repository.NewPostgresDB()
 	if err != nil {
 		log.Fatalf("Failed to initialize repository: %v", err)
 	}
@@ -17,7 +17,7 @@ func main() {
 
 	log.Println("Repository initialized successfully")
 
-	//// Server init
+	// Server init
 	//r := router.NewRouter()
 
 	//port := os.Getenv("PORT")
