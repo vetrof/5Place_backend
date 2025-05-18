@@ -47,7 +47,7 @@ INSERT INTO city (name)
 VALUES ('Astana')
 ON CONFLICT (name) DO NOTHING;
 
--- 2. Добавим главную площадь Астаны
+-- 2. Добавим центральный парк Астаны
 INSERT INTO place (city_name, name, geom, descr)
 VALUES (
   'Astana',
@@ -56,3 +56,6 @@ VALUES (
   'центральный парк Астаны'
 );
 ```
+
+в тестовом запросе передаем свои координаты  
+```GET {{domain}}/near_place?long=71.408771&lat=51.162030```
