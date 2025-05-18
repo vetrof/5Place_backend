@@ -21,3 +21,22 @@ start project:
 go mod tidy
 go run cmd/api/main.go
 ```
+
+connect to database in ide: 
+```jdbc:postgresql://localhost:55000/place5```
+
+sql for test insert places
+```-- 1. Добавим город Астана
+INSERT INTO city (name)
+VALUES ('Astana')
+ON CONFLICT (name) DO NOTHING;
+
+-- 2. Добавим главную площадь Астаны
+INSERT INTO place (city_name, name, geom, descr)
+VALUES (
+  'Astana',
+  'Independence Square',
+  ST_GeogFromText('SRID=4326;POINT(71.4304 51.1169)'),
+  'Главная площадь Астаны — площадь Независимости'
+);
+```

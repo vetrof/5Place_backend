@@ -1,0 +1,2 @@
+## Get near place
+GET {{domain}}/near_place?lat=71.408771&long=51.162030
