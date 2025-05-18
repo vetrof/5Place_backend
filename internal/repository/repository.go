@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"5Place/internal/models"
 	"database/sql"
 	"fmt"
 	"log"
@@ -108,4 +109,32 @@ func createTables(db *sql.DB) error {
 	}
 
 	return nil
+}
+
+// GetNearPlaces находит места рядом с указанными координатами
+func (db *PostgresDB) GetNearPlaces(lat, long float64) ([]models.Place, error) {
+	query := fmt.Sprintf(`
+		SELECT id, city_name, name, ST_AsText(geom) as geom, descr, 
+		ST_Distance(geom::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography) AS distance
+		FROM %s.place
+		ORDER BY distance ASC
+		LIMIT 20
+	`, os.Getenv("DB_SCHEMA")) // Или передай схему явно, если удобнее
+
+	rows, err := db.DB.Query(query, long, lat)
+	if err != nil {
+		return nil, fmt.Errorf("query error: %w", err)
+	}
+	defer rows.Close()
+
+	var places []models.Place
+	for rows.Next() {
+		var p models.Place
+		if err := rows.Scan(&p.ID, &p.CityName, &p.Name, &p.Geom, &p.Desc, &p.Distance); err != nil {
+			return nil, fmt.Errorf("row scan error: %w", err)
+		}
+		places = append(places, p)
+	}
+
+	return places, nil
 }

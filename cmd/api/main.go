@@ -2,31 +2,38 @@ package main
 
 import (
 	"5Place/internal/repository"
+	"5Place/internal/services"
 	"log"
+	"net/http"
+	"os"
+
+	"5Place/internal/api/router"
 )
 
 func main() {
 
 	// db init
-	// Инициализация репозитория
 	repo, err := repository.NewPostgresDB()
 	if err != nil {
 		log.Fatalf("Failed to initialize repository: %v", err)
 	}
 	defer repo.Close()
-
 	log.Println("Repository initialized successfully")
 
-	// Server init
-	//r := router.NewRouter()
+	// инициализация сервисного слоя
+	services.InitServices(repo)
+	log.Println("Services initialized successfully")
 
-	//port := os.Getenv("PORT")
-	//if port == "" {
-	//	port = "5555"
-	//}
-	//
-	//log.Println("Starting server at port", port)
-	//if err := http.ListenAndServe(":"+port, r); err != nil {
-	//	log.Fatal("Error starting server:", err)
-	//}
+	// get router
+	router := router.Router()
+
+	// Server init
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "5555"
+	}
+	log.Println("Starting server at port", port)
+	if err := http.ListenAndServe(":"+port, router); err != nil {
+		log.Fatal("Error starting server:", err)
+	}
 }
