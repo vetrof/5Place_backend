@@ -13,6 +13,7 @@ DB_PORT=55000
 DB_USER=postgres
 DB_NAME=place5
 DB_PASSWORD=postgrespw
+DB_SCHEMA=public
 PORT=8080
 ```
 
