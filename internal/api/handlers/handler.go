@@ -1,8 +1,9 @@
 package handlers
 
 import (
+	"5Place/internal/dto"
 	"5Place/internal/services"
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -32,5 +33,21 @@ func NearPlace(w http.ResponseWriter, r *http.Request) {
 
 	// передаем координаты в сервисный слой и ожидаем список мест
 	places := services.FindNearbyPlaces(lat, long)
-	fmt.Println("places", places)
+
+	// Преобразуем доменные сущности в DTO
+	var resp []dto.PlaceResponse
+	for _, p := range places {
+		resp = append(resp, dto.PlaceResponse{
+			ID:       p.ID,
+			Name:     p.Name,
+			CityName: p.CityName,
+		})
+	}
+
+	// Сериализация и отправка ответа
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+
 }

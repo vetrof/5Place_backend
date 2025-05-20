@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"5Place/internal/api/router"
+	"5Place/internal/api/routers"
 )
 
 func main() {
@@ -20,12 +20,12 @@ func main() {
 	defer repo.Close()
 	log.Println("Repository initialized successfully")
 
-	// инициализация сервисного слоя
+	// инициализация сервисного слоя и репозитория
 	services.InitServices(repo)
 	log.Println("Services initialized successfully")
 
-	// get router
-	router := router.Router()
+	// get rout
+	router := routers.Router()
 
 	// Server init
 	port := os.Getenv("PORT")

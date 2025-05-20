@@ -30,12 +30,12 @@ connect to database in ide:
 ```jdbc:postgresql://localhost:55000/place5```
 
 sql for test insert places
-```-- 1. Добавим центр Астаны
+```
 INSERT INTO city (name)
 VALUES ('Astana')
 ON CONFLICT (name) DO NOTHING;
-
--- 2. Добавим главную площадь Астаны
+```
+```
 INSERT INTO place (city_name, name, geom, descr)
 VALUES (
   'Astana',
@@ -45,12 +45,7 @@ VALUES (
 );
 ```
 
-```-- 1. Добавим центральный парк Астаны
-INSERT INTO city (name)
-VALUES ('Astana')
-ON CONFLICT (name) DO NOTHING;
-
--- 2. Добавим центральный парк Астаны
+```
 INSERT INTO place (city_name, name, geom, descr)
 VALUES (
   'Astana',
