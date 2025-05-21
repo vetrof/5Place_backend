@@ -1,3 +1,6 @@
 configs/production.yaml
 .idea
 .env
+admin/django/db.sqlite3
+
+*.pyc
