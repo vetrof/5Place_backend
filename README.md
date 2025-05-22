@@ -61,6 +61,11 @@ VALUES (
 
 адмика
 
-``
-http://localhost:8055/
-``
+django-admin .env
+```
+DB_HOST=db
+DB_PORT=5432
+DB_USER=postgres
+DB_NAME=place5
+DB_PASSWORD=postgrespw
+```
