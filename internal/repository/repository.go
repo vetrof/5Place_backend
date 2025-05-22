@@ -71,12 +71,14 @@ func (p *PostgresDB) Close() error {
 func createTables(db *sql.DB) error {
 	city := `
    CREATE TABLE IF NOT EXISTS city (
-      name TEXT PRIMARY KEY UNIQUE
+      id SERIAL PRIMARY KEY,
+      name TEXT UNIQUE NOT NULL
    );`
 
 	user := `
    CREATE TABLE IF NOT EXISTS "user" (
-      id TEXT PRIMARY KEY,
+      id SERIAL PRIMARY KEY,
+      external_id TEXT UNIQUE, -- для вашего текстового ID
       imei TEXT,
       telegram_id TEXT,
       email TEXT,
@@ -86,6 +88,7 @@ func createTables(db *sql.DB) error {
 	userPlace := `
    CREATE TABLE IF NOT EXISTS user_place (
       id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES "user"(id) ON UPDATE CASCADE ON DELETE CASCADE,
       info TEXT,
       geom GEOGRAPHY(POINT,4326)
    );`
@@ -93,7 +96,7 @@ func createTables(db *sql.DB) error {
 	place := `
    CREATE TABLE IF NOT EXISTS place (
       id SERIAL PRIMARY KEY,
-      city_name TEXT REFERENCES city(name) ON UPDATE CASCADE ON DELETE SET NULL,
+      city_id INTEGER REFERENCES city(id) ON UPDATE CASCADE ON DELETE SET NULL,
       name TEXT,
       geom GEOGRAPHY(POINT,4326),
       descr TEXT
