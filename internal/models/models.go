@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 // Place — структура результата
 type Place struct {
 	ID       int
@@ -8,4 +10,16 @@ type Place struct {
 	Geom     string
 	Desc     string
 	Distance float64
+}
+
+type Photo struct {
+	ID           int       `json:"id"`
+	PlaceID      int       `json:"place_id"`
+	Filename     string    `json:"filename"`
+	OriginalName string    `json:"original_name"`
+	FilePath     string    `json:"file_path"`
+	FileSize     int64     `json:"file_size"`
+	MimeType     string    `json:"mime_type"`
+	UploadedAt   time.Time `json:"uploaded_at"`
+	Description  string    `json:"description"`
 }
