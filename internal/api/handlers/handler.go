@@ -40,3 +40,16 @@ func NearPlace(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func AllCities(w http.ResponseWriter, r *http.Request) {
+
+	// передаем координаты в сервисный слой и ожидаем список мест
+	cities := services.GetAllCities()
+
+	// Сериализация и отправка ответа напрямую
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(cities); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+
+}

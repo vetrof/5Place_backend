@@ -13,40 +13,39 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
-#  directus:
-#    image: directus/directus:latest
-#    ports:
-#      - "8055:8055"
-#    environment:
-#      KEY: 'any-random-string'
-#      SECRET: 'any-random-string'
-#      DB_CLIENT: 'pg'
-#      DB_HOST: 'db'         # Имя сервиса, которое Docker Compose использует для DNS
-#      DB_PORT: '5432'       # Порт PostgreSQL ВНУТРИ контейнера db (не внешний маппинг)
-#      DB_DATABASE: 'place5'
-#      DB_USER: 'postgres'
-#      DB_PASSWORD: 'postgrespw'
-#      ADMIN_EMAIL: 'admin@example.com'
-#      ADMIN_PASSWORD: 'password'
-#    volumes:
-#      - ./uploads:/directus/uploads
-#    depends_on:
-#      - db
-
-  web:
-    build:
-      context: ./django-admin
+  directus:
+    image: directus/directus:latest
     ports:
-      - "8000:8000"
+      - "8055:8055"
+    environment:
+      KEY: 'any-random-string'
+      SECRET: 'any-random-string'
+      DB_CLIENT: 'pg'
+      DB_HOST: 'db'         # Имя сервиса, которое Docker Compose использует для DNS
+      DB_PORT: '5432'       # Порт PostgreSQL ВНУТРИ контейнера db (не внешний маппинг)
+      DB_DATABASE: 'place5'
+      DB_USER: 'postgres'
+      DB_PASSWORD: 'postgrespw'
+      ADMIN_EMAIL: 'admin@example.com'
+      ADMIN_PASSWORD: 'password'
     volumes:
-      - ./django-admin:/code
-#      - media_volume:/home/app/web/media
-#    env_file:
-#      - ./.env
+      - ./uploads:/directus/uploads
     depends_on:
       - db
-    restart: always
+
+#  web:
+#    build:
+#      context: ./django-admin
+#    ports:
+#      - "8000:8000"
+#    volumes:
+#      - ./django-admin:/code
+#    #      - media_volume:/home/app/web/media
+#    #    env_file:
+#    #      - ./.env
+#    depends_on:
+#      - db
+#    restart: always
 
 volumes:
   pgdata:
-

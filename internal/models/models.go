@@ -2,6 +2,12 @@ package models
 
 import "time"
 
+type City struct {
+	ID   int
+	Name string
+	Geom string
+}
+
 // Place — структура результата
 type Place struct {
 	ID       int

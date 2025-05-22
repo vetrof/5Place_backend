@@ -29,3 +29,19 @@ func FindNearbyPlaces(lat, long float64) []models.Place {
 
 	return places
 }
+
+// FindNearbyPlaces находит ближайшие места по координатам
+func GetAllCities() []models.City {
+	if DB == nil {
+		log.Println("Error: repository not initialized")
+		return nil
+	}
+
+	cities, err := DB.GetAllCities()
+	if err != nil {
+		log.Printf("Error finding all cities: %v", err)
+		return nil
+	}
+
+	return cities
+}
