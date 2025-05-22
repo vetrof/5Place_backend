@@ -58,20 +58,9 @@ VALUES (
 в тестовом запросе передаем свои координаты  
 ```GET {{domain}}/near_place?long=71.408771&lat=51.162030```
 
-запуск django админки
-```
-source admin/django/.venv/bin/activate
-```
 
-```
-python3 admin/django/manage.py migrate
-```
-```
-python3 admin/django/manage.py createsuperuser
-```
-```
-python3 admin/django/manage.py runserver
-```
-```
-http://127.0.0.1:8000/admin
-```
+адмика
+
+``
+http://localhost:8055/
+``
