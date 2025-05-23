@@ -139,10 +139,13 @@ func (db *PostgresDB) GetNearPlaces(lat, long float64) ([]models.Place, error) {
 
 func (db *PostgresDB) GetAllCities() ([]models.City, error) {
 	query := fmt.Sprintf(`
-		SELECT id, name, ST_AsText(geom) as geom
-		FROM %s.city
+		SELECT c.id, c.name, ST_AsText(c.geom) as geom, COUNT(p.id) as points
+		FROM %s.city c
+		LEFT JOIN %s.place p ON p.city_id = c.id
+		GROUP BY c.id, c.name, c.geom
+		ORDER BY c.id
 		LIMIT 20
-	`, os.Getenv("DB_SCHEMA")) // Или передай схему явно, если удобнее
+	`, os.Getenv("DB_SCHEMA"), os.Getenv("DB_SCHEMA"))
 
 	rows, err := db.DB.Query(query)
 	if err != nil {
@@ -153,7 +156,7 @@ func (db *PostgresDB) GetAllCities() ([]models.City, error) {
 	var cities []models.City
 	for rows.Next() {
 		var c models.City
-		if err := rows.Scan(&c.ID, &c.Name, &c.Geom); err != nil {
+		if err := rows.Scan(&c.ID, &c.Name, &c.Geom, &c.Points); err != nil {
 			return nil, fmt.Errorf("row scan error: %w", err)
 		}
 		cities = append(cities, c)

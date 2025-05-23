@@ -3,9 +3,10 @@ package models
 import "time"
 
 type City struct {
-	ID   int
-	Name string
-	Geom string
+	ID     int
+	Name   string
+	Geom   string
+	Points int
 }
 
 // Place — структура результата
