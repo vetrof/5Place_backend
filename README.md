@@ -1,16 +1,22 @@
-5Place
+# 5Place
 
-![](banner.png)
+![Banner](banner.png)
 
-***
+---
 
-dev mode: 
+## 🚧 Dev Mode
 
-for start postgis-db:  
-```docker compose up -d```
+### 📦 Запуск PostGIS
 
-.env:  
+```bash
+docker compose up -d
 ```
+
+---
+
+### 🔐 Переменные окружения (`.env`)
+
+```env
 DB_HOST=localhost
 DB_PORT=55000
 DB_USER=postgres
@@ -20,30 +26,50 @@ DB_SCHEMA=public
 PORT=8080
 ```
 
-start project:  
-```
+---
+
+### 🚀 Запуск проекта
+
+```bash
 go mod tidy
 go run cmd/api/main.go
 ```
 
-connect to database in ide: 
-```jdbc:postgresql://localhost:55000/place5```
+---
 
-sql for test insert places
+## 🧠 Подключение к базе данных в IDE
+
 ```
+jdbc:postgresql://localhost:55000/place5
+```
+
+---
+
+## 🧪 SQL для тестов
+
+### ➕ Добавить город
+
+```sql
 INSERT INTO city (name)
 VALUES ('Astana')
 ON CONFLICT (name) DO NOTHING;
 ```
-```
+
+### ➕ Добавить место (без координат)
+
+```sql
 INSERT INTO place (city_name, name, geom, descr)
 VALUES (
   'Astana',
-    'Главная площадь Астаны — площадь Независимости'
+  'Главная площадь Астаны — площадь Независимости',
+  NULL,
+  NULL
 );
 ```
 
-```
+### ➕ Добавить место с координатами
+
+```sql
 INSERT INTO place (city_name, name, geom, descr)
 VALUES (
   'Astana',
@@ -53,17 +79,26 @@ VALUES (
 );
 ```
 
-в тестовом запросе передаем свои координаты  
-```GET {{domain}}/near_place?long=71.408771&lat=51.162030```
+---
+
+## 📍 Тестовые запросы
+
+Передаем свои координаты в запросе:
 
 
-адмика
+### Get near place
+GET http://127.0.0.1:8080/near_place?long=71.108771&lat=51.962030
 
-django-admin .env
+### All cities
+GET http://127.0.0.1:8080/city
+
+
+---
+
+## 🔐 Админка Directus
+
+[http://127.0.0.1:8055/](http://localhost:8055/)
 ```
-DB_HOST=db
-DB_PORT=5432
-DB_USER=postgres
-DB_NAME=place5
-DB_PASSWORD=postgrespw
+EMAIL: 'admin@example.com'
+PASSWORD: 'password'
 ```
