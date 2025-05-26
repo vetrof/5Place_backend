@@ -40,6 +40,8 @@
 ---
 ## 🚧 Dev Mode
 
+если в .env REPO=fake то базу запускать ненужно
+
 ### 📦 Запуск PostGIS
 
 ```bash
@@ -51,6 +53,8 @@ docker compose up -d
 ### 🔐 Переменные окружения (`.env`)
 
 ```env
+REPO=fake
+
 DB_HOST=localhost
 DB_PORT=55000
 DB_USER=postgres
@@ -129,28 +133,26 @@ GET http://127.0.0.1:8080/near_place?long=71.108771&lat=51.962030
 ```json
 [
   {
-    "ID": 2,
-    "CityName": "1",
-    "Name": "house",
-    "Geom": "POINT(71.40779381461866 51.16246940914874)",
-    "Desc": "house",
-    "Distance": 84.03784534
-  },
-  {
     "ID": 1,
-    "CityName": "1",
-    "Name": "park",
-    "Geom": "POINT(71.41844700046002 51.15587254065716)",
-    "Desc": "park",
-    "Distance": 963.05044711
+    "CityName": "Астана",
+    "Name": "central park",
+    "Geom": "POINT(71.419953 51.154506)",
+    "Desc": "центральный парк Астаны",
+    "Distance": 150.25,
+    "Photos": [
+      "https://astana.citypass.kz/wp-content/uploads/7db97aa358c9dcf7b27cd405bceba5e3.jpeg"
+    ]
   },
   {
-    "ID": 3,
-    "CityName": "2",
-    "Name": "mountain",
-    "Geom": "POINT(77.05954207441113 43.203151137847215)",
-    "Desc": "mountain",
-    "Distance": 982318.60610853
+    "ID": 2,
+    "CityName": "Астана",
+    "Name": "Independence Square",
+    "Geom": "POINT(71.429745 51.128479)",
+    "Desc": "центральная площадь",
+    "Distance": 300,
+    "Photos": [
+      "https://media-cdn.tripadvisor.com/media/photo-s/0b/89/fb/fc/caption.jpg"
+    ]
   }
 ]
 
@@ -173,14 +175,4 @@ GET http://127.0.0.1:8080/city
   }
 ]
 
-```
-
----
-
-## 🔐 Админка Directus
-
-[http://127.0.0.1:8055/](http://localhost:8055/)
-```
-EMAIL: 'admin@example.com'
-PASSWORD: 'password'
 ```

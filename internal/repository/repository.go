@@ -107,12 +107,13 @@ func createTables(db *sql.DB) error {
 // GetNearPlaces находит места рядом с указанными координатами
 func (db *PostgresDB) GetNearPlaces(lat, long float64) ([]models.Place, error) {
 	query := fmt.Sprintf(`
-		SELECT id, city_id, name, ST_AsText(geom) as geom, descr, 
-		ST_Distance(geom::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography) AS distance
-		FROM %s.place
+		SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr, 
+		ST_Distance(p.geom::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography) AS distance
+		FROM %[1]s.place p
+		JOIN %[1]s.city c ON p.city_id = c.id
 		ORDER BY distance ASC
 		LIMIT 20
-	`, os.Getenv("DB_SCHEMA")) // Или передай схему явно, если удобнее
+	`, os.Getenv("DB_SCHEMA"))
 
 	rows, err := db.DB.Query(query, long, lat)
 	if err != nil {
@@ -169,7 +170,7 @@ func (db *PostgresDB) GetAllCities() ([]models.City, error) {
 
 func (db *PostgresDB) GetPhotosByPlaceID(placeID int) ([]string, error) {
 	query := fmt.Sprintf(`
-		SELECT file_path FROM %s.photo WHERE place_id = $1
+		SELECT file_link FROM %s.photo WHERE place_id = $1
 	`, os.Getenv("DB_SCHEMA"))
 
 	rows, err := db.DB.Query(query, placeID)

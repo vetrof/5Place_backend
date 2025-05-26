@@ -2,7 +2,9 @@ package main
 
 import (
 	"5Place/internal/repository"
+	"5Place/internal/repository/mocks"
 	"5Place/internal/services"
+	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
@@ -11,14 +13,27 @@ import (
 )
 
 func main() {
-
-	// db init
-	repo, err := repository.NewPostgresDB()
+	// подгружаем переменные из .env
+	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatalf("Failed to initialize repository: %v", err)
+		log.Printf("Warning: Error loading .env file: %v", err)
 	}
-	defer repo.Close()
-	log.Println("Repository initialized successfully")
+
+	// инициализация репозитория
+	var repo repository.Repository // интерфейс, который реализуют и PostgresDB, и FakeRepository
+	r := os.Getenv("REPO")
+	if r == "fake" {
+		repo = mocks.NewFakeRepository()
+		log.Println("Fake repository initialized")
+	} else {
+		pgRepo, err := repository.NewPostgresDB()
+		if err != nil {
+			log.Fatalf("Failed to initialize repository: %v", err)
+		}
+		defer pgRepo.Close()
+		log.Println("Postgres repository initialized")
+		repo = pgRepo
+	}
 
 	// инициализация сервисного слоя и репозитория
 	services.InitServices(repo)

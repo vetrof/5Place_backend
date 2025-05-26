@@ -6,11 +6,11 @@ import (
 	"log"
 )
 
-// DB глобальная переменная для хранения экземпляра репозитория
-var DB *repository.PostgresDB
+// DB — глобальный интерфейсный репозиторий
+var DB repository.Repository
 
-// InitServices инициализирует сервисный слой с репозиторием
-func InitServices(repo *repository.PostgresDB) {
+// InitServices инициализирует сервисный слой
+func InitServices(repo repository.Repository) {
 	DB = repo
 }
 
@@ -30,7 +30,7 @@ func FindNearbyPlaces(lat, long float64) []models.Place {
 	return places
 }
 
-// FindNearbyPlaces находит ближайшие места по координатам
+// GetAllCities возвращает список городов
 func GetAllCities() []models.City {
 	if DB == nil {
 		log.Println("Error: repository not initialized")
