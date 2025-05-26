@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type City struct {
 	ID     int
 	Name   string
@@ -17,16 +15,12 @@ type Place struct {
 	Geom     string
 	Desc     string
 	Distance float64
+	Photos   []string
 }
 
 type Photo struct {
-	ID           int       `json:"id"`
-	PlaceID      int       `json:"place_id"`
-	Filename     string    `json:"filename"`
-	OriginalName string    `json:"original_name"`
-	FilePath     string    `json:"file_path"`
-	FileSize     int64     `json:"file_size"`
-	MimeType     string    `json:"mime_type"`
-	UploadedAt   time.Time `json:"uploaded_at"`
-	Description  string    `json:"description"`
+	ID          int    `json:"id"`
+	PlaceID     int    `json:"place_id"`
+	FileLink    string `json:"file_path"`
+	Description string `json:"description"`
 }

@@ -79,38 +79,46 @@ jdbc:postgresql://localhost:55000/place5
 
 ---
 
-## 🧪 SQL для тестов
+## 🧪 Наполнение базы для тестов
 
-### ➕ Добавить город
+### ➕ Добавить город + 2 места + фото на каждое место
 
 ```sql
 INSERT INTO city (name)
 VALUES ('Astana')
 ON CONFLICT (name) DO NOTHING;
-```
 
-### ➕ Добавить место (без координат)
-
-```sql
-INSERT INTO place (city_name, name, geom, descr)
+INSERT INTO place (city_id, name, geom, descr)
 VALUES (
-  'Astana',
-  'Главная площадь Астаны — площадь Независимости',
-  NULL,
-  NULL
-);
-```
+           1,
+           'Independence Square',
+           ST_GeogFromText('SRID=4326;POINT(71.429745 51.128479)'),
+           'центральная площадь'
+       );
 
-### ➕ Добавить место с координатами
-
-```sql
-INSERT INTO place (city_name, name, geom, descr)
+INSERT INTO place (city_id, name, geom, descr)
 VALUES (
-  'Astana',
-  'Independence Square',
-  ST_GeogFromText('SRID=4326;POINT(71.419738 51.154179)'),
-  'центральный парк Астаны'
-);
+           1,
+           'central park',
+           ST_GeogFromText('SRID=4326;POINT(71.419953 51.154506)'),
+           'центральный парк Астаны'
+       );
+
+
+INSERT INTO photo (place_id, file_link, description)
+VALUES (
+           1,
+           'https://media-cdn.tripadvisor.com/media/photo-s/0b/89/fb/fc/caption.jpg',
+           'центральнаня площадь'
+       );
+
+INSERT INTO photo (place_id, file_link, description)
+VALUES (
+           2,
+           'https://astana.citypass.kz/wp-content/uploads/7db97aa358c9dcf7b27cd405bceba5e3.jpeg',
+           'центральный парк Астаны'
+       );
+
 ```
 
 ---
