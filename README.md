@@ -1,6 +1,6 @@
 # 5Place
 
-![Banner](banner.png)
+![Banner](docs/banner.png)
 
 ---
 
@@ -39,6 +39,9 @@
 
 ---
 ## 🚧 Dev Mode
+
+### DB Diagram
+![db](docs/db_diagram.png)
 
 ### 🔐 Переменные окружения (`.env`)
 
