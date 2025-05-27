@@ -40,6 +40,8 @@
 ---
 ## 🚧 Dev Mode
 
+ссылка на мобильное приложение (flutter)  https://github.com/vetrof/5place_flutter
+
 ### DB Diagram
 ![db](docs/db_diagram.png)
 
