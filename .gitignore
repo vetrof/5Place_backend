@@ -4,3 +4,4 @@ configs/production.yaml
 admin/django/db.sqlite3
 *.pyc
 uploads
+.DS_Store
