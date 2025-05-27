@@ -40,16 +40,6 @@
 ---
 ## 🚧 Dev Mode
 
-если в .env REPO=fake то базу запускать ненужно
-
-### 📦 Запуск PostGIS
-
-```bash
-docker compose up -d
-```
-
----
-
 ### 🔐 Переменные окружения (`.env`)
 
 ```env
@@ -63,6 +53,18 @@ DB_PASSWORD=postgrespw
 DB_SCHEMA=public
 PORT=8080
 ```
+
+если в .env REPO=fake то базу запускать ненужно
+
+### 📦 Запуск PostGIS
+
+```bash
+docker compose up --build -d
+```
+
+---
+
+
 
 ---
 
