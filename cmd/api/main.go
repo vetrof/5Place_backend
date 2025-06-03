@@ -22,6 +22,8 @@ func main() {
 	// инициализация репозитория
 	var repo repository.Repository // интерфейс, который реализуют и PostgresDB, и FakeRepository
 
+	// проверяем переменную окружения REPO
+	// если она равна "fake", то используем мок репозиторий, иначе - реальный
 	r := os.Getenv("REPO")
 	if r == "fake" {
 		repo = mocks.NewFakeRepository()
