@@ -1,4 +1,5 @@
-# 5Place
+# 5Place 
+## Go | Python | Dart | Postgres | Docker | Django | Minio | Chi 
 
 ![Banner](docs/banner.png)
 
