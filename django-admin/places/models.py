@@ -1,7 +1,22 @@
 from django.contrib.gis.db import models
+from django.utils.html import format_html
+from storages.backends.s3boto3 import S3Boto3Storage
+
+
+class PlaceType(models.Model):
+    name = models.TextField(unique=True)
+
+    class Meta:
+        managed = False
+        db_table = 'place_type'
+
+    def __str__(self):
+        return self.name
+
 
 class City(models.Model):
-    name = models.TextField(primary_key=True)
+    name = models.TextField(unique=True)
+    geom = models.PointField(geography=True, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -10,18 +25,44 @@ class City(models.Model):
     def __str__(self):
         return self.name
 
+
 class Place(models.Model):
-    city_name = models.ForeignKey(City, models.DO_NOTHING, db_column='city_name', blank=True, null=True)
-    name = models.TextField(blank=True, null=True)
-    geom = models.PointField(geography=True, blank=True, null=True)
+    type = models.ForeignKey('PlaceType', models.DO_NOTHING, blank=True, null=True)
+    city = models.ForeignKey(City, models.DO_NOTHING, blank=True, null=True)
+    name = models.CharField(max_length=255,blank=True, null=True)
     descr = models.TextField(blank=True, null=True)
+    geom = models.PointField(geography=True, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'place'
 
     def __str__(self):
-        return self.name
+       return self.name
+
+
+class Photo(models.Model):
+    place = models.ForeignKey('Place', models.DO_NOTHING, blank=True, null=True)
+    image = models.ImageField(upload_to="places_photo/", storage=S3Boto3Storage())
+    description = models.CharField(max_length=255, blank=True, null=True)
+
+    def image_tag(self):
+        if self.image:
+            url = self.image.url.replace("http://minio:9000", "http://localhost:9000")
+            return format_html('<img src="{}" style="max-height: 200px;" />', url)
+        return "—"
+
+    image_tag.short_description = 'Preview'
+    image_tag.allow_tags = True
+
+    class Meta:
+        managed = False
+        db_table = 'photo'
+
+    def __str__(self):
+        return f"{self.place}"
+
+
 
 
 

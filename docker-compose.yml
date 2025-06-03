@@ -1,7 +1,8 @@
+version: "3.8"
 
 services:
   db:
-    image: postgis/postgis:15-3.4  # или postgis/postgis:14-3.3
+    image: postgis/postgis:15-3.4
     container_name: postgis-db
     ports:
       - "55000:5432"
@@ -15,11 +16,12 @@ services:
 
 #  directus:
 #    image: directus/directus:latest
+#    container_name: directus
 #    ports:
 #      - "8055:8055"
 #    environment:
 #      KEY: 'any-random-string'
-#      SECRET: 'any-random-string'
+#      SECRET: 'any-other-random-string'
 #      DB_CLIENT: 'pg'
 #      DB_HOST: 'db'
 #      DB_PORT: '5432'
@@ -28,24 +30,58 @@ services:
 #      DB_PASSWORD: 'postgrespw'
 #      ADMIN_EMAIL: 'admin@example.com'
 #      ADMIN_PASSWORD: 'password'
-#    volumes:
-#      - ./uploads:/directus/uploads
+#
+#      STORAGE_LOCATIONS: s3
+#      STORAGE_S3_DRIVER: s3
+#      STORAGE_S3_KEY: minioadmin
+#      STORAGE_S3_SECRET: minioadmin
+#      STORAGE_S3_BUCKET: 5place-files
+#      STORAGE_S3_ENDPOINT: http://minio:9000
+#      STORAGE_S3_FORCE_PATH_STYLE: "true"
+#      STORAGE_S3_REGION: us-east-1
 #    depends_on:
 #      - db
+#      - minio
+#    restart: unless-stopped
 
-#  web:
-#    build:
-#      context: ./django-admin
-#    ports:
-#      - "8000:8000"
-#    volumes:
-#      - ./django-admin:/code
-#    #      - media_volume:/home/app/web/media
-#    #    env_file:
-#    #      - ./.env
-#    depends_on:
-#      - db
-#    restart: always
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"  # S3 API
+      - "9001:9001"  # Web UI
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+    restart: unless-stopped
+
+  minio-init:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      mc mb -p myminio/5place-files;
+      mc policy set public myminio/my-bucket;
+      exit 0;
+      "
+
+  web:
+    build:
+      context: ./django-admin
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./django-admin:/code
+    depends_on:
+      - db
+    restart: always
 
 volumes:
   pgdata:
+  minio-data:

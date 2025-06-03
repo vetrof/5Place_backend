@@ -87,6 +87,10 @@ docker compose up --build -d
 
 ---
 
+Джанго админка
+python manage.py inspectdb > places/models.py
+
+
 
 
 ---

@@ -1,5 +1,10 @@
-### Get near place
-GET {{domain}}/near_place?long=71.408771&lat=51.162030
 
 ### All cities
 GET {{domain}}/city
+
+### Near place
+GET {{domain}}/near_place?long=71.408771&lat=51.162030
+
+### Detail view
+GET {{domain}}/place/1
+
