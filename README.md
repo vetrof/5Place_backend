@@ -87,14 +87,6 @@ docker compose up --build -d
 
 ---
 
-Джанго админка
-python manage.py inspectdb > places/models.py
-
-
-
-
----
-
 ### 🚀 Запуск проекта
 
 ```bash
@@ -109,6 +101,25 @@ go run cmd/api/main.go
 ```
 jdbc:postgresql://localhost:55000/place5
 ```
+
+---
+
+## Джанго админка
+генерация моделей (в проекте уже сгенерированы)  
+```docker compose exec web python manage.py inspectdb > places/models.py```
+
+Прописать модели джанги в базу
+```bash
+docker compose exec web python manage.py migrate
+```
+
+Создать суперюзера
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+затем
+http://127.0.0.1:8000/admin
 
 ---
 
