@@ -1,6 +1,5 @@
 from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
-from .forms import PhotoUploadForm
 from places.models import Place, City, Photo, PlaceType
 from django.utils.html import format_html
 
@@ -12,7 +11,7 @@ class PhotoInline(admin.TabularInline):
 
     def image_tag(self, obj):
         if obj.image:
-            url = obj.image.url.replace("http://minio:9000", "http://localhost:9000")
+            url = obj.image.url
             return format_html('<img src="{}" style="max-height: 100px;" />', url)
         return "—"
 

@@ -2,7 +2,6 @@ from django.contrib.gis.db import models
 from django.utils.html import format_html
 from storages.backends.s3boto3 import S3Boto3Storage
 
-
 class PlaceType(models.Model):
     name = models.TextField(unique=True)
 
@@ -48,7 +47,7 @@ class Photo(models.Model):
 
     def image_tag(self):
         if self.image:
-            url = self.image.url.replace("http://minio:9000", "http://localhost:9000")
+            url = self.image.url
             return format_html('<img src="{}" style="max-height: 200px;" />', url)
         return "—"
 
