@@ -1,6 +1,5 @@
 from django.contrib.gis.db import models
 from django.utils.html import format_html
-from storages.backends.s3boto3 import S3Boto3Storage
 from .storage import CustomS3Boto3Storage
 from django.conf import settings
 
