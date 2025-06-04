@@ -1,7 +1,9 @@
 from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
-from places.models import Place, City, Photo, PlaceType
+from places.models import Place, City, Photo, PlaceType, AppUser, Favorite, VisitedPlace
 from django.utils.html import format_html
+from django.conf import settings
+
 
 class PhotoInline(admin.TabularInline):
     model = Photo
@@ -16,6 +18,8 @@ class PhotoInline(admin.TabularInline):
         return "—"
 
     image_tag.short_description = 'Preview'
+
+admin.site.register(AppUser)
 
 @admin.register(PlaceType)
 class PlaceAdmin(LeafletGeoAdmin):
@@ -35,3 +39,6 @@ class PhotoAdmin(admin.ModelAdmin):
     list_display = ("place", "image_tag")
     readonly_fields = ("image_tag",)
 
+admin.site.register(Favorite)
+
+# admin.site.register(VisitedPlace)
