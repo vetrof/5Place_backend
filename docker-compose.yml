@@ -14,36 +14,6 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
-#  directus:
-#    image: directus/directus:latest
-#    container_name: directus
-#    ports:
-#      - "8055:8055"
-#    environment:
-#      KEY: 'any-random-string'
-#      SECRET: 'any-other-random-string'
-#      DB_CLIENT: 'pg'
-#      DB_HOST: 'db'
-#      DB_PORT: '5432'
-#      DB_USER: 'postgres'
-#      DB_DATABASE: 'place5'
-#      DB_PASSWORD: 'postgrespw'
-#      ADMIN_EMAIL: 'admin@example.com'
-#      ADMIN_PASSWORD: 'password'
-#
-#      STORAGE_LOCATIONS: s3
-#      STORAGE_S3_DRIVER: s3
-#      STORAGE_S3_KEY: minioadmin
-#      STORAGE_S3_SECRET: minioadmin
-#      STORAGE_S3_BUCKET: 5place-files
-#      STORAGE_S3_ENDPOINT: http://minio:9000
-#      STORAGE_S3_FORCE_PATH_STYLE: "true"
-#      STORAGE_S3_REGION: us-east-1
-#    depends_on:
-#      - db
-#      - minio
-#    restart: unless-stopped
-
   minio:
     image: quay.io/minio/minio
     container_name: minio
@@ -58,18 +28,18 @@ services:
       - minio-data:/data
     restart: unless-stopped
 
-  minio-init:
-    image: minio/mc
-    depends_on:
-      - minio
-    entrypoint: >
-      /bin/sh -c "
-      sleep 5;
-      mc alias set myminio http://minio:9000 minioadmin minioadmin;
-      mc mb -p myminio/5place-files;
-      mc policy set public myminio/my-bucket;
-      exit 0;
-      "
+#  minio-init:
+#    image: minio/mc
+#    depends_on:
+#      - minio
+#    entrypoint: >
+#      /bin/sh -c "
+#      sleep 5;
+#      mc alias set myminio http://minio:9000 minioadmin minioadmin;
+#      mc mb -p myminio/5place-files;
+#      mc policy set public myminio/my-bucket;
+#      exit 0;
+#      "
 
   web:
     build:

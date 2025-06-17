@@ -3,13 +3,12 @@ package main
 import (
 	"5Place/internal/repository"
 	"5Place/internal/repository/mocks"
+	"5Place/internal/routers"
 	"5Place/internal/services"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
-
-	"5Place/internal/api/routers"
 )
 
 func main() {
