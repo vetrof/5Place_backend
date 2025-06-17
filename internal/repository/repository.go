@@ -54,11 +54,6 @@ func NewPostgresDB() (*PostgresDB, error) {
 	}
 	fmt.Println("Версия PostGIS:", version)
 
-	// Создаем таблицы
-	if err := createTables(db); err != nil {
-		return nil, fmt.Errorf("cannot create tables: %w", err)
-	}
-
 	return &PostgresDB{DB: db}, nil
 }
 
