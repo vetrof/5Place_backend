@@ -40,7 +40,7 @@
 
 ---
 ---
-# 🚧 Dev Mode
+
 
 ### TODO
  -[x] "Чистая" архитектура для проекта  
@@ -80,23 +80,23 @@ PORT=8080
 
 если в .env REPO=fake то базу запускать ненужно
 
-### 📦 Запуск PostGIS
-
-```bash
-docker compose up --build -d
-```
-
 ---
 
 ### 🚀 Запуск проекта
 
 ```bash
-go mod tidy
+docker compose up --build -d
+goose -dir migrations postgres "postgres://postgres:postgrespw@localhost:55000/place5?sslmode=disable&search_path=public" up
+docker compose exec web python manage.py migrate
+docker compose exec web python manage.py createsuperuser
 go run cmd/api/main.go
 ```
-
 ---
-
+---
+---
+---
+---
+# 🚧🚧🚧🚧🚧🚧🚧🚧🚧 Dev Mode 🚧🚧🚧🚧🚧🚧🚧🚧
 ## 🧠 Подключение к базе данных в IDE
 
 ```
@@ -135,8 +135,8 @@ http://127.0.0.1:8000/admin
 ### ➕ Добавить город + 2 места + фото на каждое место
 
 ```sql
-INSERT INTO city (name)
-VALUES ('Astana')
+INSERT INTO city (name, geom)
+VALUES ('Astana', ST_GeogFromText('SRID=4326;POINT(71.429745 51.128479)'))
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO place (city_id, name, geom, descr)
@@ -156,14 +156,14 @@ VALUES (
        );
 
 
-INSERT INTO photo (place_id, file_link, description)
+INSERT INTO photo (place_id, image, description)
 VALUES (
            1,
            'https://media-cdn.tripadvisor.com/media/photo-s/0b/89/fb/fc/caption.jpg',
            'центральнаня площадь'
        );
 
-INSERT INTO photo (place_id, file_link, description)
+INSERT INTO photo (place_id, image, description)
 VALUES (
            2,
            'https://astana.citypass.kz/wp-content/uploads/7db97aa358c9dcf7b27cd405bceba5e3.jpeg',

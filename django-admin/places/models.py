@@ -36,7 +36,7 @@ class PlaceType(models.Model):
 
 class City(models.Model):
     name = models.TextField(unique=True)
-    geom = models.PointField(geography=True, blank=True, null=True)
+    geom = models.PointField(geography=True)
 
     class Meta:
         managed = False
@@ -47,11 +47,11 @@ class City(models.Model):
 
 
 class Place(models.Model):
-    type = models.ForeignKey('PlaceType', models.DO_NOTHING, blank=True, null=True)
-    city = models.ForeignKey(City, models.DO_NOTHING, blank=True, null=True)
-    name = models.CharField(max_length=255,blank=True, null=True)
-    descr = models.TextField(blank=True, null=True)
-    geom = models.PointField(geography=True, blank=True, null=True)
+    type = models.ForeignKey('PlaceType', models.DO_NOTHING)
+    city = models.ForeignKey(City, models.DO_NOTHING)
+    name = models.CharField(max_length=255)
+    descr = models.TextField()
+    geom = models.PointField(geography=True)
 
     class Meta:
         managed = False
