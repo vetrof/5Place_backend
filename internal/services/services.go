@@ -47,6 +47,7 @@ func GetAllCities() []models.City {
 	return cities
 }
 
+// TODO
 // Get All Places for city возвращает список мест для города
 func CityInfo(id int) models.CityPlaces {
 	//if DB == nil {
