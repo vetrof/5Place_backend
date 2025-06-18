@@ -7,6 +7,10 @@ type City struct {
 	Points int
 }
 
+type CityPlaces struct {
+	Places string
+}
+
 // Place — структура результата
 type Place struct {
 	ID       int

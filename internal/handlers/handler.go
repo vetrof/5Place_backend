@@ -3,6 +3,7 @@ package handlers
 import (
 	"5Place/internal/services"
 	"encoding/json"
+	"github.com/go-chi/chi"
 	"log"
 	"net/http"
 	"strconv"
@@ -47,6 +48,26 @@ func AllCities(w http.ResponseWriter, r *http.Request) {
 
 	// передаем координаты в сервисный слой и ожидаем список мест
 	cities := services.GetAllCities()
+
+	// Сериализация и отправка ответа напрямую
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(cities); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+
+}
+
+func CityInfo(w http.ResponseWriter, r *http.Request) {
+
+	idStr := chi.URLParam(r, "id")
+	id, err := strconv.Atoi(idStr) // конвертируем в int
+	if err != nil {
+		http.Error(w, "Неверный ID", http.StatusBadRequest)
+		return
+	}
+
+	// передаем координаты в сервисный слой и ожидаем список мест
+	cities := services.CityInfo(id)
 
 	// Сериализация и отправка ответа напрямую
 	w.Header().Set("Content-Type", "application/json")
