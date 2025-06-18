@@ -66,8 +66,29 @@ func (db *PostgresDB) GetPhotosByPlaceID(placeID int) ([]string, error) {
 	return photos, nil
 }
 
+// TODO
 // GetAllCityPlaces выводит все места города
-func (db *PostgresDB) GetAllCityPlaces(id int) ([]models.Place, error) {
+func (db *PostgresDB) GetAllCityPlaces(cityID int) ([]models.Place, error) {
+
+	query := fmt.Sprintf(`
+		SELECT 
+			p.id, 
+			c.name AS city_name, 
+			p.name, 
+			ST_AsText(p.geom) as geom, 
+			p.descr, 
+			0 as distance
+		FROM %s.place p
+		JOIN %s.city c ON p.city_id = c.id
+		WHERE p.city_id = $1
+		LIMIT 20
+	`, os.Getenv("DB_SCHEMA"), os.Getenv("DB_SCHEMA"))
+
+	rows, err := db.DB.Query(query, cityID)
+	if err != nil {
+		return nil, fmt.Errorf("query error: %w", err)
+	}
+	defer rows.Close()
 
 	return nil, nil
 }
