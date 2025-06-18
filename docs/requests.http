@@ -1,7 +1,7 @@
 ### All cities
 GET {{domain}}/city
 
-### city detail
+### all city places
 GET {{domain}}/city/1
 
 ### Near place

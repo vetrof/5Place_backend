@@ -15,7 +15,7 @@ func Router() chi.Router {
 	// Public paths
 	router.Get("/near_place", handlers.NearPlace)
 	router.Get("/city", handlers.AllCities)
-	router.Get("/city/{id}", handlers.CityInfo)
+	router.Get("/city/{id}", handlers.CityPlaces)
 
 	return router
 }

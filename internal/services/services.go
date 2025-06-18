@@ -3,7 +3,6 @@ package services
 import (
 	"5Place/internal/models"
 	"5Place/internal/repository"
-	"fmt"
 	"log"
 )
 
@@ -49,19 +48,17 @@ func GetAllCities() []models.City {
 
 // TODO
 // Get All Places for city возвращает список мест для города
-func CityInfo(id int) models.CityPlaces {
-	//if DB == nil {
-	//	log.Println("Error: repository not initialized")
-	//	return nil
-	//}
-	//
-	//cities, err := DB.GetAllCities()
-	//if err != nil {
-	//	log.Printf("Error finding all cities: %v", err)
-	//	return nil
-	//}
+func CityPlaces(id int) []models.Place {
+	if DB == nil {
+		log.Println("Error: repository not initialized")
+		return nil
+	}
 
-	cities := models.CityPlaces{Places: fmt.Sprint(id)}
+	places, err := DB.GetAllCityPlaces(id)
+	if err != nil {
+		log.Printf("Error finding nearby places: %v", err)
+		return nil
+	}
 
-	return cities
+	return places
 }

@@ -65,3 +65,9 @@ func (db *PostgresDB) GetPhotosByPlaceID(placeID int) ([]string, error) {
 
 	return photos, nil
 }
+
+// GetAllCityPlaces выводит все места города
+func (db *PostgresDB) GetAllCityPlaces(id int) ([]models.Place, error) {
+
+	return nil, nil
+}

@@ -57,7 +57,7 @@ func AllCities(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func CityInfo(w http.ResponseWriter, r *http.Request) {
+func CityPlaces(w http.ResponseWriter, r *http.Request) {
 
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr) // конвертируем в int
@@ -67,11 +67,11 @@ func CityInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// передаем координаты в сервисный слой и ожидаем список мест
-	cities := services.CityInfo(id)
+	cityPlaces := services.CityPlaces(id)
 
 	// Сериализация и отправка ответа напрямую
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(cities); err != nil {
+	if err := json.NewEncoder(w).Encode(cityPlaces); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 
