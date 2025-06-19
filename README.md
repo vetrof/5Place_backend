@@ -147,15 +147,13 @@ VALUES (
 
 # 📍 Public API
 
-## 🔹 `GET /cities` — All Cities
-
-**Request:**
-```
-GET {{domain}}/cities
-```
-
-**Response:**
 ```json
+### all cities
+
+Request:
+GET {{domain}}/cities
+
+Response:
 {
   "data": [
     {
@@ -175,19 +173,16 @@ GET {{domain}}/cities
     }
   }
 }
+
 ```
 
----
-
-## 🔹 `GET /places/near` — Near 5 Places
-
-**Request:**
-```
-GET {{domain}}/places/near?long=71.408771&lat=51.162030
-```
-
-**Response:**
 ```json
+### near 5 places
+        
+Request:
+GET {{domain}}/places/near?long=71.408771&lat=51.162030
+
+Response:
 {
   "data": [
     {
@@ -225,17 +220,13 @@ GET {{domain}}/places/near?long=71.408771&lat=51.162030
 }
 ```
 
----
-
-## 🔹 `GET /places/{id}` — Place Detail
-
-**Request:**
-```
-GET {{domain}}/places/1
-```
-
-**Response:**
 ```json
+### place detail
+
+Request:
+GET {{domain}}/places/1
+        
+Response:
 {
   "data": [
     {
@@ -258,19 +249,16 @@ GET {{domain}}/places/1
     }
   }
 }
+
 ```
 
----
-
-## 🔹 `GET /places/city/{city_id}` — Places in City
-
-**Request:**
-```
-GET {{domain}}/places/city/1
-```
-
-**Response:**
 ```json
+### places list in city
+
+Request:
+GET {{domain}}/places/city/1
+
+Response:
 {
   "data": [
     {
