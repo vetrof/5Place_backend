@@ -1,26 +1,26 @@
 package models
 
 type City struct {
-	ID     int
-	Name   string
-	Geom   string
-	Points int
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Geom   string `json:"geom"`
+	Points int    `json:"points"`
 }
 
 // Place — структура результата
 type Place struct {
-	ID       int
-	CityName string
-	Name     string
-	Geom     string
-	Desc     string
-	Distance float64
-	Photos   []string
+	ID       int      `json:"id"`
+	CityName string   `json:"cityName"`
+	Name     string   `json:"name"`
+	Geom     string   `json:"geom"`
+	Desc     string   `json:"desc"`
+	Distance float64  `json:"distance"`
+	Photos   []string `json:"photos"`
 }
 
 type Photo struct {
 	ID          int    `json:"id"`
-	PlaceID     int    `json:"place_id"`
-	FileLink    string `json:"file_path"`
+	PlaceID     int    `json:"placeId"`
+	FileLink    string `json:"fileLink"`
 	Description string `json:"description"`
 }

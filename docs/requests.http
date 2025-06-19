@@ -1,11 +1,11 @@
-### All cities
-GET {{domain}}/city
+### all cities
+GET {{domain}}/cities
 
-### all city places
-GET {{domain}}/city/1
+### near 5 places
+GET {{domain}}/places/near?long=71.408771&lat=51.162030&limit=5&radius=5000
 
-### Near place
-GET {{domain}}/near_place?long=71.408771&lat=51.162030
+### place detail
+GET {{domain}}/places/1
 
-### Detail place view
-GET {{domain}}/place/1
+### places list in city
+GET {{domain}}/places/city/1

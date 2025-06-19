@@ -176,50 +176,16 @@ VALUES (
 
 ## 📍 Тестовые запросы
 
-GET http://127.0.0.1:8080/near_place?long=71.108771&lat=51.962030
 ```json
-[
-  {
-    "ID": 1,
-    "CityName": "Астана",
-    "Name": "central park",
-    "Geom": "POINT(71.419953 51.154506)",
-    "Desc": "центральный парк Астаны",
-    "Distance": 150.25,
-    "Photos": [
-      "https://astana.citypass.kz/wp-content/uploads/7db97aa358c9dcf7b27cd405bceba5e3.jpeg"
-    ]
-  },
-  {
-    "ID": 2,
-    "CityName": "Астана",
-    "Name": "Independence Square",
-    "Geom": "POINT(71.429745 51.128479)",
-    "Desc": "центральная площадь",
-    "Distance": 300,
-    "Photos": [
-      "https://media-cdn.tripadvisor.com/media/photo-s/0b/89/fb/fc/caption.jpg"
-    ]
-  }
-]
+### all cities
+GET {{domain}}/cities
 
-```
+### near 5 places
+GET {{domain}}/places/near?long=71.408771&lat=51.162030
 
-GET http://127.0.0.1:8080/city
-```json
-[
-  {
-    "ID": 1,
-    "Name": "astana",
-    "Geom": "POINT(71.41042574459857 51.15162433549682)",
-    "Points": 2
-  },
-  {
-    "ID": 2,
-    "Name": "almaty",
-    "Geom": "POINT(76.93752703214142 43.25406013672736)",
-    "Points": 1
-  }
-]
+### place detail
+GET {{domain}}/places/1
 
+### places list in city
+GET {{domain}}/places/city/1
 ```

@@ -10,7 +10,7 @@ func NewFakeRepository() *FakeRepository {
 	return &FakeRepository{}
 }
 
-func (r *FakeRepository) GetNearPlaces(lat, long float64) ([]models.Place, error) {
+func (r *FakeRepository) GetNearPlaces(lat, long float64, limit int, radius float64) ([]models.Place, error) {
 	return []models.Place{
 		{
 			ID:       1,
@@ -79,6 +79,21 @@ func (db *FakeRepository) GetAllCityPlaces(id int) ([]models.Place, error) {
 			Desc:     "центральная площадь",
 			Distance: 300.00,
 			Photos:   []string{"https://media-cdn.tripadvisor.com/media/photo-s/0b/89/fb/fc/caption.jpg"},
+		},
+	}, nil
+}
+
+// GetAllCityPlaces выводит все места города
+func (db *FakeRepository) GetPlaceDetail(id int) ([]models.Place, error) {
+	return []models.Place{
+		{
+			ID:       1,
+			CityName: "Астана",
+			Name:     "central park",
+			Geom:     "POINT(71.419953 51.154506)",
+			Desc:     "центральный парк Астаны",
+			Distance: 150.25,
+			Photos:   []string{"https://astana.citypass.kz/wp-content/uploads/7db97aa358c9dcf7b27cd405bceba5e3.jpeg"},
 		},
 	}, nil
 }
