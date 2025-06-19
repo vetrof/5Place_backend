@@ -3,6 +3,9 @@
 
 ![Banner](docs/banner.png)
 
+Интерфейс админки
+![Admin](docs/admin_interface.png)
+
 ---
 
 ## 🌍 О проекте 5Place
