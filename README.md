@@ -1,5 +1,5 @@
 # 5Place 
-## Go | Python | Dart | Postgres | Docker | Django | Minio | Chi 
+## Go | Python | Flutter | Postgres | Docker | Django | Minio | Chi 
 
 ![Banner](docs/banner.png)
 
