@@ -15,13 +15,13 @@ func InitServices(repo repository.Repository) {
 }
 
 // FindNearbyPlaces находит ближайшие места по координатам
-func FindNearbyPlaces(lat, long float64) []models.Place {
+func FindNearbyPlaces(lat, long float64, limit int, radius float64) []models.Place {
 	if DB == nil {
 		log.Println("Error: repository not initialized")
 		return nil
 	}
 
-	places, err := DB.GetNearPlaces(lat, long)
+	places, err := DB.GetNearPlaces(lat, long, limit, radius)
 	if err != nil {
 		log.Printf("Error finding nearby places: %v", err)
 		return nil
@@ -44,4 +44,36 @@ func GetAllCities() []models.City {
 	}
 
 	return cities
+}
+
+// Get All Places for city возвращает список мест для города
+func CityPlaces(id int) []models.Place {
+	if DB == nil {
+		log.Println("Error: repository not initialized")
+		return nil
+	}
+
+	places, err := DB.GetAllCityPlaces(id)
+	if err != nil {
+		log.Printf("Error finding nearby places: %v", err)
+		return nil
+	}
+
+	return places
+}
+
+// Get All Places for city возвращает список мест для города
+func PlaceDetail(id int) []models.Place {
+	if DB == nil {
+		log.Println("Error: repository not initialized")
+		return nil
+	}
+
+	places, err := DB.GetPlaceDetail(id)
+	if err != nil {
+		log.Printf("Error finding nearby places: %v", err)
+		return nil
+	}
+
+	return places
 }
