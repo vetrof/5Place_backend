@@ -43,29 +43,6 @@ func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64
 	return places, nil
 }
 
-func (db *PostgresDB) GetPhotosByPlaceID(placeID int) ([]string, error) {
-	query := fmt.Sprintf(`
-		SELECT image FROM %s.photo WHERE place_id = $1
-	`, os.Getenv("DB_SCHEMA"))
-
-	rows, err := db.DB.Query(query, placeID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var photos []string
-	for rows.Next() {
-		var filePath string
-		if err := rows.Scan(&filePath); err != nil {
-			return nil, err
-		}
-		photos = append(photos, filePath)
-	}
-
-	return photos, nil
-}
-
 // PlaceDetail
 func (db *PostgresDB) GetPlaceDetail(placeID int) ([]models.Place, error) {
 	// Простой запрос без сортировки по расстоянию
@@ -160,4 +137,28 @@ func (db *PostgresDB) GetAllCityPlaces(cityID int) ([]models.Place, error) {
 	}
 
 	return places, nil
+}
+
+// функция для получения фото к месту
+func (db *PostgresDB) GetPhotosByPlaceID(placeID int) ([]string, error) {
+	query := fmt.Sprintf(`
+		SELECT image FROM %s.photo WHERE place_id = $1
+	`, os.Getenv("DB_SCHEMA"))
+
+	rows, err := db.DB.Query(query, placeID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var photos []string
+	for rows.Next() {
+		var filePath string
+		if err := rows.Scan(&filePath); err != nil {
+			return nil, err
+		}
+		photos = append(photos, filePath)
+	}
+
+	return photos, nil
 }
