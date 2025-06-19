@@ -147,13 +147,11 @@ VALUES (
 
 # 📍 Public API
 
-```json
+```
 ### all cities
-
-Request:
 GET {{domain}}/cities
-
-Response:
+```
+```json
 {
   "data": [
     {
@@ -176,13 +174,11 @@ Response:
 
 ```
 
-```json
+```
 ### near 5 places
-        
-Request:
 GET {{domain}}/places/near?long=71.408771&lat=51.162030
-
-Response:
+```
+```json
 {
   "data": [
     {
@@ -220,13 +216,11 @@ Response:
 }
 ```
 
-```json
+```
 ### place detail
-
-Request:
 GET {{domain}}/places/1
-        
-Response:
+```
+```json
 {
   "data": [
     {
@@ -249,16 +243,13 @@ Response:
     }
   }
 }
-
 ```
 
-```json
+```
 ### places list in city
-
-Request:
 GET {{domain}}/places/city/1
-
-Response:
+```
+```json
 {
   "data": [
     {
