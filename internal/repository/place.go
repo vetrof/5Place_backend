@@ -11,8 +11,8 @@ func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64
 	query := fmt.Sprintf(`
 		SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr, 
 		ST_Distance(p.geom::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography) AS distance
-		FROM %[1]s.place p
-		JOIN %[1]s.city c ON p.city_id = c.id
+		FROM %[1]s.app_place p
+		JOIN %[1]s.app_city c ON p.city_id = c.id
 		ORDER BY distance ASC
 		LIMIT 20
 	`, os.Getenv("DB_SCHEMA"))
@@ -48,8 +48,8 @@ func (db *PostgresDB) GetPlaceDetail(placeID int) ([]models.Place, error) {
 	// Простой запрос без сортировки по расстоянию
 	query := `
         SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr
-        FROM place p
-        JOIN city c ON p.city_id = c.id
+        FROM app_place p
+        JOIN app_city c ON p.city_id = c.id
         WHERE p.id = $1
         ORDER BY p.name ASC
         LIMIT 20`
@@ -96,8 +96,8 @@ func (db *PostgresDB) GetAllCityPlaces(cityID int) ([]models.Place, error) {
 	// Простой запрос без сортировки по расстоянию
 	query := `
         SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr
-        FROM place p
-        JOIN city c ON p.city_id = c.id
+        FROM app_place p
+        JOIN app_city c ON p.city_id = c.id
         WHERE p.city_id = $1
         ORDER BY p.name ASC
         LIMIT 20`
@@ -142,7 +142,7 @@ func (db *PostgresDB) GetAllCityPlaces(cityID int) ([]models.Place, error) {
 // функция для получения фото к месту
 func (db *PostgresDB) GetPhotosByPlaceID(placeID int) ([]string, error) {
 	query := fmt.Sprintf(`
-		SELECT image FROM %s.photo WHERE place_id = $1
+		SELECT image FROM %s.app_photo WHERE place_id = $1
 	`, os.Getenv("DB_SCHEMA"))
 
 	rows, err := db.DB.Query(query, placeID)
