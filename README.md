@@ -41,28 +41,13 @@
 ---
 ---
 
-
-### TODO
- -[x] "Чистая" архитектура для проекта  
- -[x] Приложение на flutter для проекта  
- -[x] Таблицы для юзера м избранного  
- -[x] Подключение к БД через интерфейс  
- -[ ] Подключить миграции  
- -[ ] Избранное  
- -[ ] Посещенное  
- -[ ] Поля для ссылок на видео и аудио  
- -[ ] S3 хранилище для изображений (на входе оптимизировать)  
- -[ ] Подключить кеш  
- -[ ] Таблицу для маршрутов  
- -[ ] Таблицу для моих точек (сохранять свое положение)  
- -[ ] Авторизация через телегу или whatsapp  
- -[ ] Добавить таблицу - рейтинг  
-
 ### APP
 ссылка на мобильное приложение (flutter)  https://github.com/vetrof/5place_flutter
 
 ### DB Diagram
 ![db](docs/db_diagram.png)
+
+# 🚧🚧🚧🚧🚧🚧🚧🚧🚧 Dev Mode 🚧🚧🚧🚧🚧🚧🚧🚧
 
 ### 🔐 Переменные окружения (`.env`)
 
@@ -91,12 +76,8 @@ docker compose exec web python manage.py migrate
 docker compose exec web python manage.py createsuperuser
 go run cmd/api/main.go
 ```
----
----
----
----
----
-# 🚧🚧🚧🚧🚧🚧🚧🚧🚧 Dev Mode 🚧🚧🚧🚧🚧🚧🚧🚧
+
+
 ## 🧠 Подключение к базе данных в IDE
 
 ```
@@ -112,20 +93,6 @@ goose -dir migrations postgres "postgres://postgres:postgrespw@localhost:55000/p
 ---
 
 ## Джанго админка
-генерация моделей (в проекте уже сгенерированы)  
-```docker compose exec web python manage.py inspectdb > places/models.py```
-
-Прописать модели джанги в базу
-```bash
-docker compose exec web python manage.py migrate
-```
-
-Создать суперюзера
-```bash
-docker compose exec web python manage.py createsuperuser
-```
-
-затем
 http://127.0.0.1:8000/admin
 
 ---
@@ -173,19 +140,166 @@ VALUES (
 ```
 
 ---
+---
 
-## 📍 Тестовые запросы
+# 📍 Public API
 
-```json
-### all cities
+## 🔹 `GET /cities` — All Cities
+
+**Request:**
+```
 GET {{domain}}/cities
+```
 
-### near 5 places
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Astana",
+      "geom": "POINT(71.429745 51.128479)",
+      "points": 2
+    }
+  ],
+  "meta": {
+    "count": 0,
+    "limit": 0,
+    "searchRadius": 0,
+    "center": {
+      "lat": 0,
+      "lon": 0
+    }
+  }
+}
+```
+
+---
+
+## 🔹 `GET /places/near` — Near 5 Places
+
+**Request:**
+```
 GET {{domain}}/places/near?long=71.408771&lat=51.162030
+```
 
-### place detail
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": 2,
+      "cityName": "Astana",
+      "name": "central park",
+      "geom": "POINT(71.419953 51.154506)",
+      "desc": "центральный парк Астаны",
+      "distance": 1145.69542435,
+      "photos": [
+        "https://astana.citypass.kz/wp-content/uploads/7db97aa358c9dcf7b27cd405bceba5e3.jpeg"
+      ]
+    },
+    {
+      "id": 1,
+      "cityName": "Astana",
+      "name": "Independence Square",
+      "geom": "POINT(71.429745 51.128479)",
+      "desc": "центральная площадь",
+      "distance": 4010.78532212,
+      "photos": [
+        "https://media-cdn.tripadvisor.com/media/photo-s/0b/89/fb/fc/caption.jpg"
+      ]
+    }
+  ],
+  "meta": {
+    "count": 2,
+    "limit": 5,
+    "searchRadius": 5000,
+    "center": {
+      "lat": 51.16203,
+      "lon": 71.408771
+    }
+  }
+}
+```
+
+---
+
+## 🔹 `GET /places/{id}` — Place Detail
+
+**Request:**
+```
 GET {{domain}}/places/1
+```
 
-### places list in city
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "cityName": "Astana",
+      "name": "Independence Square",
+      "geom": "POINT(71.429745 51.128479)",
+      "desc": "центральная площадь",
+      "distance": 0,
+      "photos": null
+    }
+  ],
+  "meta": {
+    "count": 0,
+    "limit": 0,
+    "searchRadius": 0,
+    "center": {
+      "lat": 0,
+      "lon": 0
+    }
+  }
+}
+```
+
+---
+
+## 🔹 `GET /places/city/{city_id}` — Places in City
+
+**Request:**
+```
 GET {{domain}}/places/city/1
 ```
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": 2,
+      "cityName": "Astana",
+      "name": "central park",
+      "geom": "POINT(71.419953 51.154506)",
+      "desc": "центральный парк Астаны",
+      "distance": 0,
+      "photos": null
+    },
+    {
+      "id": 1,
+      "cityName": "Astana",
+      "name": "Independence Square",
+      "geom": "POINT(71.429745 51.128479)",
+      "desc": "центральная площадь",
+      "distance": 0,
+      "photos": null
+    }
+  ],
+  "meta": {
+    "count": 0,
+    "limit": 0,
+    "searchRadius": 0,
+    "center": {
+      "lat": 0,
+      "lon": 0
+    }
+  }
+}
+```
+
+
+
