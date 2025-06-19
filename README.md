@@ -73,13 +73,19 @@ PORT=8080
 ### 🚀 Запуск проекта
 
 ```bash
+// запуск контейнеров
 docker compose up --build -d
 goose -dir migrations postgres "postgres://postgres:postgrespw@localhost:55000/place5?sslmode=disable&search_path=public" up
+
+// запуск админки
 docker compose exec web python manage.py migrate
 docker compose exec web python manage.py createsuperuser
+
+// запуск api
 go run cmd/api/main.go
 ```
-
+## Джанго админка
+http://127.0.0.1:8000/admin
 
 ## 🧠 Подключение к базе данных в IDE
 
@@ -95,8 +101,7 @@ goose -dir migrations postgres "postgres://postgres:postgrespw@localhost:55000/p
 ```
 ---
 
-## Джанго админка
-http://127.0.0.1:8000/admin
+
 
 ---
 

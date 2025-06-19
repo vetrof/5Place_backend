@@ -28,7 +28,7 @@ class PlaceType(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'place_type'
+        db_table = 'app_place_type'
 
     def __str__(self):
         return self.name
@@ -40,7 +40,7 @@ class City(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'city'
+        db_table = 'app_city'
 
     def __str__(self):
         return self.name
@@ -55,7 +55,7 @@ class Place(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'place'
+        db_table = 'app_place'
 
     def __str__(self):
        return self.name
@@ -77,7 +77,7 @@ class Photo(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'photo'
+        db_table = 'app_photo'
 
     def __str__(self):
         return f"{self.place}"
@@ -90,7 +90,7 @@ class Favorite(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'favorite'
+        db_table = 'app_favorite'
 
 
 class VisitedPlace(models.Model):
@@ -100,7 +100,7 @@ class VisitedPlace(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'visited_place'
+        db_table = 'app_visited_place'
 
 
 

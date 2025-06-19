@@ -9,8 +9,8 @@ import (
 func (db *PostgresDB) GetAllCities() ([]models.City, error) {
 	query := fmt.Sprintf(`
 		SELECT c.id, c.name, ST_AsText(c.geom) as geom, COUNT(p.id) as points
-		FROM %s.city c
-		LEFT JOIN %s.place p ON p.city_id = c.id
+		FROM %s.app_city c
+		LEFT JOIN %s.app_place p ON p.city_id = c.id
 		GROUP BY c.id, c.name, c.geom
 		ORDER BY c.id
 		LIMIT 20
