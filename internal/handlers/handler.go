@@ -27,10 +27,32 @@ type Coordinates struct {
 	Lon float64 `json:"lon"`
 }
 
-func AllCities(w http.ResponseWriter, r *http.Request) {
+func Countries(w http.ResponseWriter, r *http.Request) {
 
-	// передаем координаты в сервисный слой и ожидаем список мест
-	cities := services.GetAllCities()
+	countries := services.GetCountries()
+
+	response := ResponseGeneric[[]models.Country, ResponseMeta]{
+		Data: countries,
+		Meta: ResponseMeta{},
+	}
+
+	// Сериализация и отправка ответа напрямую
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func Cities(w http.ResponseWriter, r *http.Request) {
+
+	idStr := chi.URLParam(r, "country_id")
+	id, err := strconv.Atoi(idStr) // конвертируем в int
+	if err != nil {
+		http.Error(w, "Неверный ID", http.StatusBadRequest)
+		return
+	}
+
+	cities := services.GetAllCities(id)
 
 	response := ResponseGeneric[[]models.City, ResponseMeta]{
 		Data: cities,

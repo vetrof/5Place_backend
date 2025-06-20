@@ -3,20 +3,28 @@ package repository
 import (
 	"5Place/internal/models"
 	"fmt"
-	"os"
 )
 
-func (db *PostgresDB) GetAllCities() ([]models.City, error) {
-	query := fmt.Sprintf(`
-		SELECT c.id, c.name, ST_AsText(c.geom) as geom, COUNT(p.id) as points
-		FROM %s.app_city c
-		LEFT JOIN %s.app_place p ON p.city_id = c.id
-		GROUP BY c.id, c.name, c.geom
-		ORDER BY c.id
-		LIMIT 20
-	`, os.Getenv("DB_SCHEMA"), os.Getenv("DB_SCHEMA"))
+func (db *PostgresDB) GetAllCities(country_id int) ([]models.City, error) {
+	fmt.Println("country_id -->> ", country_id)
 
-	rows, err := db.DB.Query(query)
+	query := fmt.Sprintf(`
+	SELECT 
+		c.id,
+		c.name,
+		ST_AsText(c.geom) as geom,
+		COUNT(p.id) as points,
+		co.name AS country_name
+	FROM app_city c
+	LEFT JOIN app_place p ON p.city_id = c.id
+	JOIN app_country co ON c.country_id = co.id
+	WHERE c.country_id = $1
+	GROUP BY c.id, c.name, c.geom, co.name
+	ORDER BY c.id
+	LIMIT 20
+`)
+
+	rows, err := db.DB.Query(query, country_id)
 	if err != nil {
 		return nil, fmt.Errorf("query error: %w", err)
 	}
@@ -25,7 +33,7 @@ func (db *PostgresDB) GetAllCities() ([]models.City, error) {
 	var cities []models.City
 	for rows.Next() {
 		var c models.City
-		if err := rows.Scan(&c.ID, &c.Name, &c.Geom, &c.Points); err != nil {
+		if err := rows.Scan(&c.ID, &c.Name, &c.Geom, &c.Points, &c.Country); err != nil {
 			return nil, fmt.Errorf("row scan error: %w", err)
 		}
 		cities = append(cities, c)

@@ -33,7 +33,20 @@ func (r *FakeRepository) GetNearPlaces(lat, long float64, limit int, radius floa
 	}, nil
 }
 
-func (r *FakeRepository) GetAllCities() ([]models.City, error) {
+func (r *FakeRepository) GetCountries() ([]models.Country, error) {
+	return []models.Country{
+		{
+			ID:   1,
+			Name: "kz",
+		},
+		{
+			ID:   2,
+			Name: "uz",
+		},
+	}, nil
+}
+
+func (r *FakeRepository) GetAllCities(country_id int) ([]models.City, error) {
 	return []models.City{
 		{
 			ID:     1,

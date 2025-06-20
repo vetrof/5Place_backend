@@ -1,10 +1,16 @@
 package models
 
+type Country struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type City struct {
-	ID     int    `json:"id"`
-	Name   string `json:"name"`
-	Geom   string `json:"geom"`
-	Points int    `json:"points"`
+	ID      int    `json:"id"`
+	Country string `json:"country"`
+	Name    string `json:"name"`
+	Geom    string `json:"geom"`
+	Points  int    `json:"points"`
 }
 
 // Place — структура результата

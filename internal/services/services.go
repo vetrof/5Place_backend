@@ -14,6 +14,38 @@ func InitServices(repo repository.Repository) {
 	DB = repo
 }
 
+// GetAllCities возвращает список стран
+func GetCountries() []models.Country {
+	if DB == nil {
+		log.Println("Error: repository not initialized")
+		return nil
+	}
+
+	countries, err := DB.GetCountries()
+	if err != nil {
+		log.Printf("Error finding all cities: %v", err)
+		return nil
+	}
+
+	return countries
+}
+
+// GetAllCities возвращает список городов
+func GetAllCities(country_id int) []models.City {
+	if DB == nil {
+		log.Println("Error: repository not initialized")
+		return nil
+	}
+
+	cities, err := DB.GetAllCities(country_id)
+	if err != nil {
+		log.Printf("Error finding all cities: %v", err)
+		return nil
+	}
+
+	return cities
+}
+
 // FindNearbyPlaces находит ближайшие места по координатам
 func FindNearbyPlaces(lat, long float64, limit int, radius float64) []models.Place {
 	if DB == nil {
@@ -28,22 +60,6 @@ func FindNearbyPlaces(lat, long float64, limit int, radius float64) []models.Pla
 	}
 
 	return places
-}
-
-// GetAllCities возвращает список городов
-func GetAllCities() []models.City {
-	if DB == nil {
-		log.Println("Error: repository not initialized")
-		return nil
-	}
-
-	cities, err := DB.GetAllCities()
-	if err != nil {
-		log.Printf("Error finding all cities: %v", err)
-		return nil
-	}
-
-	return cities
 }
 
 // Get All Places for city возвращает список мест для города
