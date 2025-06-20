@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"5Place/internal/handlers"
+	"5Place/internal/place/handlers"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 )
