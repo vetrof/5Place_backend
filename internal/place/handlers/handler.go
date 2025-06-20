@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"5Place/internal/models"
-	"5Place/internal/services"
+	"5Place/internal/place/models"
+	"5Place/internal/place/services"
 	"encoding/json"
 	"github.com/go-chi/chi"
 	"log"

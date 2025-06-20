@@ -1,10 +1,10 @@
 package main
 
 import (
-	"5Place/internal/repository"
-	"5Place/internal/repository/mocks"
+	repository2 "5Place/internal/place/repository"
+	"5Place/internal/place/repository/mocks"
+	"5Place/internal/place/services"
 	"5Place/internal/routers"
-	"5Place/internal/services"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
@@ -19,7 +19,7 @@ func main() {
 	}
 
 	// инициализация репозитория
-	var repo repository.Repository // интерфейс, который реализуют и PostgresDB, и FakeRepository
+	var repo repository2.Repository // интерфейс, который реализуют и PostgresDB, и FakeRepository
 
 	// проверяем переменную окружения REPO
 	// если она равна "fake", то используем мок репозиторий, иначе - реальный
@@ -28,7 +28,7 @@ func main() {
 		repo = mocks.NewFakeRepository()
 		log.Println("Fake repository initialized")
 	} else {
-		pgRepo, err := repository.NewPostgresDB()
+		pgRepo, err := repository2.NewPostgresDB()
 		if err != nil {
 			log.Fatalf("Failed to initialize repository: %v", err)
 		}

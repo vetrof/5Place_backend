@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"5Place/internal/models"
+	"5Place/internal/place/models"
 	"fmt"
 )
 

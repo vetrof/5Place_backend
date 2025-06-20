@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"5Place/internal/models"
+	"5Place/internal/place/models"
 )
 
 type FakeRepository struct{}

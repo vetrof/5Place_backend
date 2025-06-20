@@ -1,8 +1,8 @@
 package services
 
 import (
-	"5Place/internal/models"
-	"5Place/internal/repository"
+	"5Place/internal/place/models"
+	"5Place/internal/place/repository"
 	"log"
 )
 

@@ -1,6 +1,8 @@
 package repository
 
-import "5Place/internal/models"
+import (
+	"5Place/internal/place/models"
+)
 
 type Repository interface {
 	GetNearPlaces(lat, long float64, limit int, radius float64) ([]models.Place, error)

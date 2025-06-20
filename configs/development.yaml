@@ -1,8 +1,0 @@
-database:
-  host: "localhost"
-  port: "55000"
-  user: "postgres"
-  password: "postgrespw"
-  dbname: "place5"
-  sslmode: "disable"
-  migrations_path: "./migrations"
