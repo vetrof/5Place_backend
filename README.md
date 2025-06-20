@@ -148,6 +148,33 @@ VALUES (
 
 # 📍 Public API
 
+```json
+### countries
+GET {{domain}}/countries
+
+### cities
+GET {{domain}}/cities/country/1
+
+### near 5 places
+GET {{domain}}/places/near?long=71.408771&lat=51.162030&limit=5&radius=5000
+
+### place detail
+GET {{domain}}/places/1
+
+### random places
+GET {{domain}}/places/random
+
+### random places country
+GET {{domain}}/places/random?country=1
+
+### random places city
+GET {{domain}}/places/random?city=1
+
+### places list in city
+GET {{domain}}/places/city/1
+```
+
+
 ```
 ### all cities
 GET {{domain}}/cities

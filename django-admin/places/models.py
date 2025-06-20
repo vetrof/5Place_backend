@@ -34,9 +34,20 @@ class PlaceType(models.Model):
         return self.name
 
 
+class Country(models.Model):
+    name = models.TextField(unique=True)
+
+    class Meta:
+        managed = False
+        db_table = 'app_country'
+
+    def __str__(self):
+        return self.name
+
 class City(models.Model):
     name = models.TextField(unique=True)
     geom = models.PointField(geography=True)
+    country = models.ForeignKey(Country, models.DO_NOTHING)
 
     class Meta:
         managed = False
