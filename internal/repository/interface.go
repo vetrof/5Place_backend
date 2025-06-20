@@ -8,4 +8,5 @@ type Repository interface {
 	GetAllCityPlaces(id int) ([]models.Place, error)
 	GetPlaceDetail(id int) ([]models.Place, error)
 	GetCountries() ([]models.Country, error)
+	GetRandomPlaces(countryId *int64, cityId *int64) ([]models.Place, error)
 }

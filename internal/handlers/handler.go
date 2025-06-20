@@ -66,7 +66,7 @@ func Cities(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func NearPlace(w http.ResponseWriter, r *http.Request) {
+func NearPlaces(w http.ResponseWriter, r *http.Request) {
 
 	// берем координаты из квери-параметров
 	latStr := r.URL.Query().Get("lat")
@@ -114,6 +114,48 @@ func NearPlace(w http.ResponseWriter, r *http.Request) {
 				Lon: lon,
 			},
 		},
+	}
+
+	// Сериализация и отправка ответа напрямую
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return // добавить return
+	}
+
+}
+
+func RandomPlaces(w http.ResponseWriter, r *http.Request) {
+
+	var countryId *int64
+	var cityId *int64
+
+	countryIdStr := r.URL.Query().Get("country")
+	if countryIdStr != "" {
+		val, err := strconv.ParseInt(countryIdStr, 10, 64)
+		if err != nil {
+			http.Error(w, "Invalid country parameter", http.StatusBadRequest)
+			return
+		}
+		countryId = &val
+	}
+
+	cityIdStr := r.URL.Query().Get("city")
+	if cityIdStr != "" {
+		val, err := strconv.ParseInt(cityIdStr, 10, 64)
+		if err != nil {
+			http.Error(w, "Invalid city parameter", http.StatusBadRequest)
+			return
+		}
+		cityId = &val
+	}
+
+	// передаем координаты в сервисный слой и ожидаем список мест
+	places := services.RandomPlaces(countryId, cityId)
+
+	response := ResponseGeneric[[]models.Place, ResponseMeta]{
+		Data: places,
 	}
 
 	// Сериализация и отправка ответа напрямую

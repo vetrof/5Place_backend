@@ -1,6 +1,6 @@
 from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
-from places.models import Place, City, Photo, PlaceType, AppUser, Favorite, VisitedPlace
+from places.models import Place, City, Photo, PlaceType, AppUser, Favorite, VisitedPlace, Country
 from django.utils.html import format_html
 from django.conf import settings
 
@@ -22,6 +22,10 @@ class PhotoInline(admin.TabularInline):
 admin.site.register(AppUser)
 
 @admin.register(PlaceType)
+class PlaceAdmin(LeafletGeoAdmin):
+    list_display = ("name",)
+
+@admin.register(Country)
 class PlaceAdmin(LeafletGeoAdmin):
     list_display = ("name",)
 

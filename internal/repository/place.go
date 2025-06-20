@@ -162,3 +162,55 @@ func (db *PostgresDB) GetPhotosByPlaceID(placeID int) ([]string, error) {
 
 	return photos, nil
 }
+
+func (db *PostgresDB) GetRandomPlaces(countryId *int64, cityId *int64) ([]models.Place, error) {
+	query := `
+        SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr
+        FROM app_place p
+        JOIN app_city c ON p.city_id = c.id
+    `
+	var args []any
+
+	if countryId != nil {
+		query += "WHERE c.country_id = $1\n"
+		args = append(args, *countryId)
+	} else if cityId != nil {
+		query += "WHERE c.id = $1\n"
+		args = append(args, *cityId)
+	}
+
+	query += "ORDER BY random() LIMIT 100"
+
+	rows, err := db.DB.Query(query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query places: %w", err)
+	}
+	defer rows.Close()
+
+	var places []models.Place
+	for rows.Next() {
+		var place models.Place
+		var cityName string
+		var geomText string
+
+		if err := rows.Scan(
+			&place.ID,
+			&cityName,
+			&place.Name,
+			&geomText,
+			&place.Desc,
+		); err != nil {
+			return nil, fmt.Errorf("failed to scan place: %w", err)
+		}
+
+		place.CityName = cityName
+		place.Geom = geomText
+		places = append(places, place)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating places: %w", err)
+	}
+
+	return places, nil
+}

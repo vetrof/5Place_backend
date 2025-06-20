@@ -93,3 +93,22 @@ func PlaceDetail(id int) []models.Place {
 
 	return places
 }
+
+func RandomPlaces(countryId *int64, cityId *int64) []models.Place {
+	if DB == nil {
+		log.Println("Error: repository not initialized")
+		return nil
+	}
+
+	if cityId != nil {
+		countryId = nil
+	}
+
+	places, err := DB.GetRandomPlaces(countryId, cityId)
+	if err != nil {
+		log.Printf("Error finding nearby places: %v", err)
+		return nil
+	}
+
+	return places
+}
