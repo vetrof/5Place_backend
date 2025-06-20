@@ -1,5 +1,8 @@
-### all cities
-GET {{domain}}/cities
+### countries
+GET {{domain}}/countries
+
+### cities
+GET {{domain}}/cities/country/1
 
 ### near 5 places
 GET {{domain}}/places/near?long=71.408771&lat=51.162030&limit=5&radius=5000

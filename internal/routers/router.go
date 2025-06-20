@@ -13,7 +13,9 @@ func Router() chi.Router {
 	router.Use(middleware.Logger)
 
 	// Public paths
-	router.Get("/cities", handlers.AllCities)
+	//router.Get("/countries", handlers.Countries)
+	router.Get("/countries", handlers.Countries)
+	router.Get("/cities/country/{country_id}", handlers.Cities)
 	router.Get("/places/near", handlers.NearPlace)
 	router.Get("/places/{place_id}", handlers.PlaceDetail)
 	router.Get("/places/city/{city_id}", handlers.CityPlaces)
