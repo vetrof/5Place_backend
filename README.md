@@ -50,6 +50,87 @@
 ### DB Diagram
 ![db](docs/db_diagram.png)
 
+## Структура проекта
+
+```text
+.
+├── LICENSE
+├── README.md
+├── admin
+│   ├── Dockerfile
+│   ├── _settings
+│   │   ├── __init__.py
+│   │   ├── asgi.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   ├── manage.py
+│   ├── places
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── migrations
+│   │   │   └── __init__.py
+│   │   ├── models.py
+│   │   ├── storage.py
+│   │   ├── tests.py
+│   │   └── views.py
+│   └── requirements.txt
+├── cmd
+│   └── main.go
+├── docker-compose.yml
+├── docs
+│   ├── admin_interface.png
+│   ├── banner.png
+│   ├── db_diagram.png
+│   ├── docs.go
+│   ├── http-client.env.json
+│   ├── project.md
+│   ├── requests.http
+│   ├── swagger.json
+│   └── swagger.yaml
+├── go.mod
+├── go.sum
+├── internal
+│   ├── place
+│   │   ├── handlers
+│   │   │   └── handler.go
+│   │   ├── models
+│   │   │   └── models.go
+│   │   ├── repository
+│   │   │   ├── city.go
+│   │   │   ├── country.go
+│   │   │   ├── db.go
+│   │   │   ├── interface.go
+│   │   │   ├── mocks
+│   │   │   │   └── fakeRepository.go
+│   │   │   └── place.go
+│   │   ├── router
+│   │   │   └── router.go
+│   │   ├── services
+│   │   │   └── services.go
+│   │   └── utils
+│   │       ├── gps
+│   │       │   └── gps.go
+│   │       ├── logger
+│   │       │   └── logger.go
+│   │       └── validator
+│   │           └── validator.go
+│   └── user
+│       └── router
+│           └── router.go
+└── migrations
+    ├── 20250617123001_create_app_user.sql
+    ├── 20250617123002_create_app_place_type.sql
+    ├── 20250617123003_create_app_city.sql
+    ├── 20250617123004_create_app_place.sql
+    ├── 20250617123005_create_app_photo.sql
+    ├── 20250617123006_create_app_favorite.sql
+    ├── 20250617123007_create_app_visited_place.sql
+    ├── 20250620061639_create_app_country.sql
+    └── 20250620062151_add_country_id_to_city.sql
+
+
 # 🚧🚧🚧🚧🚧🚧🚧🚧🚧 Dev Mode 🚧🚧🚧🚧🚧🚧🚧🚧
 
 ### 🔐 Переменные окружения (`.env`)
