@@ -1,32 +1,35 @@
 package models
 
+// Country представляет страну
 type Country struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID   int    `json:"id" example:"1"`
+	Name string `json:"name" example:"Kazakhstan"`
 }
 
+// City представляет город
 type City struct {
-	ID      int    `json:"id"`
-	Country string `json:"country"`
-	Name    string `json:"name"`
-	Geom    string `json:"geom"`
-	Points  int    `json:"points"`
+	ID      int    `json:"id" example:"1"`
+	Country string `json:"country" example:"Kazakhstan"`
+	Name    string `json:"name" example:"Almaty"`
+	Geom    string `json:"geom" example:"POINT(76.8512 43.2220)"`
+	Points  int    `json:"points" example:"150"`
 }
 
-// Place — структура результата
+// Place представляет место/достопримечательность
 type Place struct {
-	ID       int      `json:"id"`
-	CityName string   `json:"cityName"`
-	Name     string   `json:"name"`
-	Geom     string   `json:"geom"`
-	Desc     string   `json:"desc"`
-	Distance float64  `json:"distance"`
-	Photos   []string `json:"photos"`
+	ID       int      `json:"id" example:"1"`
+	CityName string   `json:"cityName" example:"Almaty"`
+	Name     string   `json:"name" example:"Kok-Tobe Hill"`
+	Geom     string   `json:"geom" example:"POINT(76.9572 43.2316)"`
+	Desc     string   `json:"desc" example:"Famous hill with panoramic view of Almaty city"`
+	Distance float64  `json:"distance" example:"1245.67"`
+	Photos   []string `json:"photos" example:"photo1.jpg,photo2.jpg"`
 }
 
+// Photo представляет фотографию места
 type Photo struct {
-	ID          int    `json:"id"`
-	PlaceID     int    `json:"placeId"`
-	FileLink    string `json:"fileLink"`
-	Description string `json:"description"`
+	ID          int    `json:"id" example:"1"`
+	PlaceID     int    `json:"placeId" example:"1"`
+	FileLink    string `json:"fileLink" example:"https://example.com/photos/place_1_photo_1.jpg"`
+	Description string `json:"description" example:"Beautiful sunset view from Kok-Tobe Hill"`
 }

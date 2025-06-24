@@ -148,36 +148,40 @@ VALUES (
 
 # 📍 Public API
 
+## swagger
+
+http://localhost:8080/swagger/
+
 ```json
 ### countries
-GET {{domain}}/countries
+GET {{domain}}/place/countries
 
 ### cities
-GET {{domain}}/cities/country/1
+GET {{domain}}/place/cities/country/1
 
 ### near 5 places
-GET {{domain}}/places/near?long=71.408771&lat=51.162030&limit=5&radius=5000
+GET {{domain}}/place/places/near?long=71.408771&lat=51.162030&limit=5&radius=5000
 
 ### place detail
-GET {{domain}}/places/1
+GET {{domain}}/place/places/1
 
 ### random places
-GET {{domain}}/places/random
+GET {{domain}}/place/places/random
 
 ### random places country
-GET {{domain}}/places/random?country=1
+GET {{domain}}/place/places/random?country=1
 
 ### random places city
-GET {{domain}}/places/random?city=1
+GET {{domain}}/place/places/random?city=1
 
 ### places list in city
-GET {{domain}}/places/city/1
+GET {{domain}}/place/places/city/1
 ```
 
 
 ```
 ### all cities
-GET {{domain}}/cities
+GET {{domain}}/place/cities
 ```
 ```json
 {
@@ -204,7 +208,7 @@ GET {{domain}}/cities
 
 ```
 ### near 5 places
-GET {{domain}}/places/near?long=71.408771&lat=51.162030
+GET {{domain}}/place/places/near?long=71.408771&lat=51.162030
 ```
 ```json
 {
@@ -246,7 +250,7 @@ GET {{domain}}/places/near?long=71.408771&lat=51.162030
 
 ```
 ### place detail
-GET {{domain}}/places/1
+GET {{domain}}/place/places/1
 ```
 ```json
 {
@@ -275,7 +279,7 @@ GET {{domain}}/places/1
 
 ```
 ### places list in city
-GET {{domain}}/places/city/1
+GET {{domain}}/place/places/city/1
 ```
 ```json
 {
