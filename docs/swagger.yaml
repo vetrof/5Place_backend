@@ -1,0 +1,325 @@
+basePath: /
+definitions:
+  handlers.Coordinates:
+    properties:
+      lat:
+        type: number
+      lon:
+        type: number
+    type: object
+  handlers.ErrorResponse:
+    properties:
+      error:
+        example: Invalid parameter
+        type: string
+    type: object
+  handlers.ResponseGeneric-array_models_City-handlers_ResponseMeta:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.City'
+        type: array
+      meta:
+        $ref: '#/definitions/handlers.ResponseMeta'
+    type: object
+  handlers.ResponseGeneric-array_models_Country-handlers_ResponseMeta:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Country'
+        type: array
+      meta:
+        $ref: '#/definitions/handlers.ResponseMeta'
+    type: object
+  handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Place'
+        type: array
+      meta:
+        $ref: '#/definitions/handlers.ResponseMeta'
+    type: object
+  handlers.ResponseMeta:
+    properties:
+      center:
+        $ref: '#/definitions/handlers.Coordinates'
+      count:
+        type: integer
+      limit:
+        type: integer
+      searchRadius:
+        type: number
+    type: object
+  models.City:
+    properties:
+      country:
+        example: Kazakhstan
+        type: string
+      geom:
+        example: POINT(76.8512 43.2220)
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Almaty
+        type: string
+      points:
+        example: 150
+        type: integer
+    type: object
+  models.Country:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Kazakhstan
+        type: string
+    type: object
+  models.Place:
+    properties:
+      cityName:
+        example: Almaty
+        type: string
+      desc:
+        example: Famous hill with panoramic view of Almaty city
+        type: string
+      distance:
+        example: 1245.67
+        type: number
+      geom:
+        example: POINT(76.9572 43.2316)
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Kok-Tobe Hill
+        type: string
+      photos:
+        example:
+        - photo1.jpg
+        - photo2.jpg
+        items:
+          type: string
+        type: array
+    type: object
+host: localhost:5555
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: API для приложения 5Place - поиск и управление местами
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: 5Place API
+  version: "1.0"
+paths:
+  /place/cities/country/{country_id}:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список городов для указанной страны
+      parameters:
+      - description: ID страны
+        example: 1
+        in: path
+        name: country_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_City-handlers_ResponseMeta'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Получить города по стране
+      tags:
+      - cities
+  /place/countries:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список всех доступных стран
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Country-handlers_ResponseMeta'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Получить список стран
+      tags:
+      - countries
+  /place/places/{place_id}:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает подробную информацию о месте по его ID
+      parameters:
+      - description: ID места
+        example: 1
+        in: path
+        name: place_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Получить детали места
+      tags:
+      - places
+  /place/places/city/{city_id}:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список всех мест в указанном городе
+      parameters:
+      - description: ID города
+        example: 1
+        in: path
+        name: city_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Получить места в городе
+      tags:
+      - places
+  /place/places/near:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает места в указанном радиусе от координат
+      parameters:
+      - description: Широта
+        example: 43.222
+        in: query
+        name: lat
+        required: true
+        type: number
+      - description: Долгота
+        example: 76.8512
+        in: query
+        name: long
+        required: true
+        type: number
+      - default: 10
+        description: Максимальное количество результатов (1-100)
+        example: 10
+        in: query
+        name: limit
+        type: integer
+      - default: 5000
+        description: Радиус поиска в метрах (1-50000)
+        example: 5000
+        in: query
+        name: radius
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Найти места поблизости
+      tags:
+      - places
+  /place/places/random:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает случайные места с возможностью фильтрации по стране
+        или городу
+      parameters:
+      - description: ID страны для фильтрации
+        example: 1
+        in: query
+        name: country
+        type: integer
+      - description: ID города для фильтрации
+        example: 1
+        in: query
+        name: city
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Получить случайные места
+      tags:
+      - places
+schemes:
+- http
+- https
+swagger: "2.0"
+tags:
+- description: Операции со странами
+  name: countries
+- description: Операции с городами
+  name: cities
+- description: Операции с местами и достопримечательностями
+  name: places
