@@ -32,11 +32,11 @@ services:
 
   web:
     build:
-      context: ./django-admin
+      context: ./admin
     ports:
       - "8000:8000"
     volumes:
-      - ./django-admin:/code
+      - ./admin:/code
     depends_on:
       - db
     restart: always
