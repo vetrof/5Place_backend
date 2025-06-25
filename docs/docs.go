@@ -24,6 +24,219 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/place/cities/{country_id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cities"
+                ],
+                "summary": "Получить список городов по ID страны",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID страны",
+                        "name": "country_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_City-handlers_ResponseMeta"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/place/city/{city_id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "places"
+                ],
+                "summary": "Получить все места в городе",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID города",
+                        "name": "city_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/place/countries": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "countries"
+                ],
+                "summary": "Получить список стран",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Country-handlers_ResponseMeta"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/place/detail/{place_id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "places"
+                ],
+                "summary": "Получить детальную информацию о месте",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID места",
+                        "name": "place_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/place/near": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "places"
+                ],
+                "summary": "Найти места рядом с координатами",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Широта",
+                        "name": "lat",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Долгота",
+                        "name": "long",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Максимальное количество (1-100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Радиус поиска в метрах (по умолчанию 5000)",
+                        "name": "radius",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid lat or long",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/place/random": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "places"
+                ],
+                "summary": "Получить случайные места",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID страны",
+                        "name": "country",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID города",
+                        "name": "city",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid query parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Авторизует пользователя и возвращает JWT токен",
@@ -166,219 +379,6 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "string"
                             }
-                        }
-                    }
-                }
-            }
-        },
-        "/place/cities/{country_id}": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "cities"
-                ],
-                "summary": "Получить список городов по ID страны",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID страны",
-                        "name": "country_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_City-handlers_ResponseMeta"
-                        }
-                    },
-                    "400": {
-                        "description": "Неверный ID",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/place/city/{city_id}": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "places"
-                ],
-                "summary": "Получить все места в городе",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID города",
-                        "name": "city_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
-                        }
-                    },
-                    "400": {
-                        "description": "Неверный ID",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/place/countries": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "countries"
-                ],
-                "summary": "Получить список стран",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Country-handlers_ResponseMeta"
-                        }
-                    }
-                }
-            }
-        },
-        "/place/detail/{place_id}": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "places"
-                ],
-                "summary": "Получить детальную информацию о месте",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID места",
-                        "name": "place_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
-                        }
-                    },
-                    "400": {
-                        "description": "Неверный ID",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/place/near": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "places"
-                ],
-                "summary": "Найти места рядом с координатами",
-                "parameters": [
-                    {
-                        "type": "number",
-                        "description": "Широта",
-                        "name": "lat",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "number",
-                        "description": "Долгота",
-                        "name": "long",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Максимальное количество (1-100)",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "Радиус поиска в метрах (по умолчанию 5000)",
-                        "name": "radius",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid lat or long",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/place/random": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "places"
-                ],
-                "summary": "Получить случайные места",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID страны",
-                        "name": "country",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "ID города",
-                        "name": "city",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid query parameters",
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 }
@@ -631,7 +631,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:5555",
+	Host:             "localhost:8080",
 	BasePath:         "/",
 	Schemes:          []string{"http", "https"},
 	Title:            "5Place API",

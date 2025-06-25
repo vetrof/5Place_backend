@@ -188,29 +188,59 @@ VALUES (
 http://localhost:8080/swagger/
 
 ```json
+### api info
+GET {{domain}}/
+
+### health
+GET {{domain}}/health
+
+### auth/register
+POST {{domain}}/auth/register
+Content-Type: application/json
+
+{
+"username": "testuser",
+"email": "test@example.com",
+"password": "password123"
+}
+
+### auth/login
+POST {{domain}}/auth/login
+Content-Type: application/json
+
+{
+"email": "test@example.com",
+"password": "password123"
+}
+
+### auth/profile
+GET {{domain}}/auth/profile
+Authorization: Bearer "token"
+
 ### countries
-GET {{domain}}/place/countries
+GET {{domain}}/api/v1/place/countries
 
 ### cities
-GET {{domain}}/place/cities/country/1
+GET {{domain}}/api/v1/place/cities/country/1
 
 ### near 5 places
-GET {{domain}}/place/places/near?long=71.408771&lat=51.162030&limit=5&radius=5000
+GET {{domain}}/api/v1/place/places/near?long=71.408771&lat=51.162030&limit=5&radius=5000
 
 ### place detail
-GET {{domain}}/place/places/1
+GET {{domain}}/api/v1/place/places/1
 
 ### random places
-GET {{domain}}/place/places/random
+GET {{domain}}/api/v1/place/places/random
 
 ### random places country
-GET {{domain}}/place/places/random?country=1
+GET {{domain}}/api/v1/place/places/random?country=1
 
 ### random places city
-GET {{domain}}/place/places/random?city=1
+GET {{domain}}/api/v1/place/places/random?city=2
 
 ### places list in city
-GET {{domain}}/place/places/city/1
+GET {{domain}}/api/v1/place/places/city/1
+
 ```
 
 

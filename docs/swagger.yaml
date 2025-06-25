@@ -145,7 +145,7 @@ definitions:
           type: string
         type: array
     type: object
-host: localhost:5555
+host: localhost:8080
 info:
   contact:
     email: support@swagger.io
@@ -159,6 +159,144 @@ info:
   title: 5Place API
   version: "1.0"
 paths:
+  /api/v1/place/cities/{country_id}:
+    get:
+      parameters:
+      - description: ID страны
+        in: path
+        name: country_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_City-handlers_ResponseMeta'
+        "400":
+          description: Неверный ID
+          schema:
+            type: string
+      summary: Получить список городов по ID страны
+      tags:
+      - cities
+  /api/v1/place/city/{city_id}:
+    get:
+      parameters:
+      - description: ID города
+        in: path
+        name: city_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
+        "400":
+          description: Неверный ID
+          schema:
+            type: string
+      summary: Получить все места в городе
+      tags:
+      - places
+  /api/v1/place/countries:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Country-handlers_ResponseMeta'
+      summary: Получить список стран
+      tags:
+      - countries
+  /api/v1/place/detail/{place_id}:
+    get:
+      parameters:
+      - description: ID места
+        in: path
+        name: place_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
+        "400":
+          description: Неверный ID
+          schema:
+            type: string
+      summary: Получить детальную информацию о месте
+      tags:
+      - places
+  /api/v1/place/near:
+    get:
+      parameters:
+      - description: Широта
+        in: query
+        name: lat
+        required: true
+        type: number
+      - description: Долгота
+        in: query
+        name: long
+        required: true
+        type: number
+      - description: Максимальное количество (1-100)
+        in: query
+        name: limit
+        type: integer
+      - description: Радиус поиска в метрах (по умолчанию 5000)
+        in: query
+        name: radius
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
+        "400":
+          description: Invalid lat or long
+          schema:
+            type: string
+      summary: Найти места рядом с координатами
+      tags:
+      - places
+  /api/v1/place/random:
+    get:
+      parameters:
+      - description: ID страны
+        in: query
+        name: country
+        type: integer
+      - description: ID города
+        in: query
+        name: city
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
+        "400":
+          description: Invalid query parameters
+          schema:
+            type: string
+      summary: Получить случайные места
+      tags:
+      - places
   /auth/login:
     post:
       consumes:
@@ -254,144 +392,6 @@ paths:
       summary: Регистрация нового пользователя
       tags:
       - auth
-  /place/cities/{country_id}:
-    get:
-      parameters:
-      - description: ID страны
-        in: path
-        name: country_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.ResponseGeneric-array_models_City-handlers_ResponseMeta'
-        "400":
-          description: Неверный ID
-          schema:
-            type: string
-      summary: Получить список городов по ID страны
-      tags:
-      - cities
-  /place/city/{city_id}:
-    get:
-      parameters:
-      - description: ID города
-        in: path
-        name: city_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
-        "400":
-          description: Неверный ID
-          schema:
-            type: string
-      summary: Получить все места в городе
-      tags:
-      - places
-  /place/countries:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Country-handlers_ResponseMeta'
-      summary: Получить список стран
-      tags:
-      - countries
-  /place/detail/{place_id}:
-    get:
-      parameters:
-      - description: ID места
-        in: path
-        name: place_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
-        "400":
-          description: Неверный ID
-          schema:
-            type: string
-      summary: Получить детальную информацию о месте
-      tags:
-      - places
-  /place/near:
-    get:
-      parameters:
-      - description: Широта
-        in: query
-        name: lat
-        required: true
-        type: number
-      - description: Долгота
-        in: query
-        name: long
-        required: true
-        type: number
-      - description: Максимальное количество (1-100)
-        in: query
-        name: limit
-        type: integer
-      - description: Радиус поиска в метрах (по умолчанию 5000)
-        in: query
-        name: radius
-        type: number
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
-        "400":
-          description: Invalid lat or long
-          schema:
-            type: string
-      summary: Найти места рядом с координатами
-      tags:
-      - places
-  /place/random:
-    get:
-      parameters:
-      - description: ID страны
-        in: query
-        name: country
-        type: integer
-      - description: ID города
-        in: query
-        name: city
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta'
-        "400":
-          description: Invalid query parameters
-          schema:
-            type: string
-      summary: Получить случайные места
-      tags:
-      - places
 schemes:
 - http
 - https

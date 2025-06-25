@@ -32,7 +32,7 @@ type Coordinates struct {
 // @Tags countries
 // @Produce json
 // @Success 200 {object} ResponseGeneric[[]models.Country, ResponseMeta]
-// @Router /place/countries [get]
+// @Router /api/v1/place/countries [get]
 func Countries(w http.ResponseWriter, r *http.Request) {
 
 	countries := services.GetCountries()
@@ -56,7 +56,7 @@ func Countries(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {object} ResponseGeneric[[]models.City, ResponseMeta]
 // @Failure 400 {string} string "Неверный ID"
-// @Router /place/cities/{country_id} [get]
+// @Router /api/v1/place/cities/{country_id} [get]
 func Cities(w http.ResponseWriter, r *http.Request) {
 
 	idStr := chi.URLParam(r, "country_id")
@@ -90,7 +90,7 @@ func Cities(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {object} ResponseGeneric[[]models.Place, ResponseMeta]
 // @Failure 400 {string} string "Invalid lat or long"
-// @Router /place/near [get]
+// @Router /api/v1/place/near [get]
 func NearPlaces(w http.ResponseWriter, r *http.Request) {
 
 	// берем координаты из квери-параметров
@@ -159,7 +159,7 @@ func NearPlaces(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {object} ResponseGeneric[[]models.Place, ResponseMeta]
 // @Failure 400 {string} string "Invalid query parameters"
-// @Router /place/random [get]
+// @Router /api/v1/place/random [get]
 func RandomPlaces(w http.ResponseWriter, r *http.Request) {
 
 	var countryId *int64
@@ -209,7 +209,7 @@ func RandomPlaces(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {object} ResponseGeneric[[]models.Place, ResponseMeta]
 // @Failure 400 {string} string "Неверный ID"
-// @Router /place/detail/{place_id} [get]
+// @Router /api/v1/place/detail/{place_id} [get]
 func PlaceDetail(w http.ResponseWriter, r *http.Request) {
 
 	idStr := chi.URLParam(r, "place_id")
@@ -242,7 +242,7 @@ func PlaceDetail(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {object} ResponseGeneric[[]models.Place, ResponseMeta]
 // @Failure 400 {string} string "Неверный ID"
-// @Router /place/city/{city_id} [get]
+// @Router /api/v1/place/city/{city_id} [get]
 func CityPlaces(w http.ResponseWriter, r *http.Request) {
 
 	idStr := chi.URLParam(r, "city_id")
