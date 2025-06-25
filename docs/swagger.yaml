@@ -126,6 +126,7 @@ definitions:
         example: Almaty
         type: string
       currency:
+        example: USD
         type: string
       desc:
         example: Famous hill with panoramic view of Almaty city

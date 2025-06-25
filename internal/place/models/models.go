@@ -26,7 +26,7 @@ type Place struct {
 	Distance float64  `json:"distance" example:"1245.67"`
 	Type     string   `json:"type" example:"monument"`
 	Price    *int     `json:"price" example:"42"`
-	Currency string   `json:"currency"`
+	Currency string   `json:"currency" example:"USD"`
 	Photos   []string `json:"photos" example:"photo1.jpg,photo2.jpg"`
 }
 

@@ -572,7 +572,8 @@ const docTemplate = `{
                     "example": "Almaty"
                 },
                 "currency": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "USD"
                 },
                 "desc": {
                     "type": "string",
