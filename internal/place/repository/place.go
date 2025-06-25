@@ -7,6 +7,30 @@ import (
 	"os"
 )
 
+// функция для получения фото к месту
+func (db *PostgresDB) GetPhotosByPlaceID(placeID int, limit int) ([]string, error) {
+	query := fmt.Sprintf(`
+		SELECT image FROM %s.app_photo WHERE place_id = $1 LIMIT $2
+	`, os.Getenv("DB_SCHEMA"))
+
+	rows, err := db.DB.Query(query, placeID, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var photos []string
+	for rows.Next() {
+		var filePath string
+		if err := rows.Scan(&filePath); err != nil {
+			return nil, err
+		}
+		photos = append(photos, filePath)
+	}
+
+	return photos, nil
+}
+
 // GetNearPlaces находит места рядом с указанными координатами
 func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64) ([]models.Place, error) {
 	query := fmt.Sprintf(`
@@ -32,7 +56,7 @@ func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64
 			return nil, fmt.Errorf("row scan error: %w", err)
 		}
 
-		photos, err := db.GetPhotosByPlaceID(p.ID)
+		photos, err := db.GetPhotosByPlaceID(p.ID, 1) // лимит на отображение фоток - 1
 		if err != nil {
 			return nil, err
 		}
@@ -59,7 +83,7 @@ func (db *PostgresDB) GetPlaceDetail(placeID int) (models.Place, error) {
 	var cityName string
 	var geomText string
 
-	photos, _ := db.GetPhotosByPlaceID(placeID)
+	photos, _ := db.GetPhotosByPlaceID(placeID, 10) // лимит фоток для карточки 10
 
 	err := db.DB.QueryRow(query, placeID).Scan(
 		&place.Type,
@@ -133,30 +157,6 @@ func (db *PostgresDB) GetAllCityPlaces(cityID int) ([]models.Place, error) {
 	return places, nil
 }
 
-// функция для получения фото к месту
-func (db *PostgresDB) GetPhotosByPlaceID(placeID int) ([]string, error) {
-	query := fmt.Sprintf(`
-		SELECT image FROM %s.app_photo WHERE place_id = $1
-	`, os.Getenv("DB_SCHEMA"))
-
-	rows, err := db.DB.Query(query, placeID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var photos []string
-	for rows.Next() {
-		var filePath string
-		if err := rows.Scan(&filePath); err != nil {
-			return nil, err
-		}
-		photos = append(photos, filePath)
-	}
-
-	return photos, nil
-}
-
 func (db *PostgresDB) GetRandomPlaces(countryId *int64, cityId *int64) ([]models.Place, error) {
 	query := `
         SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr
@@ -197,6 +197,11 @@ func (db *PostgresDB) GetRandomPlaces(countryId *int64, cityId *int64) ([]models
 			return nil, fmt.Errorf("failed to scan place: %w", err)
 		}
 
+		photos, err := db.GetPhotosByPlaceID(place.ID, 1) // задаем лимит фото для каждой карточки
+		if err != nil {
+			return nil, err
+		}
+		place.Photos = photos
 		place.CityName = cityName
 		place.Geom = geomText
 		places = append(places, place)

@@ -15,10 +15,10 @@ func Router() chi.Router {
 	// Public paths
 	router.Get("/countries", handlers.Countries)
 	router.Get("/cities/country/{country_id}", handlers.Cities)
-	router.Get("/places/near", handlers.NearPlaces)
-	router.Get("/places/random", handlers.RandomPlaces)
-	router.Get("/places/{place_id}", handlers.PlaceDetail)
-	router.Get("/places/city/{city_id}", handlers.CityPlaces)
+	router.Get("/near", handlers.NearPlaces)
+	router.Get("/random", handlers.RandomPlaces)
+	router.Get("/detail/{place_id}", handlers.PlaceDetail)
+	router.Get("/city/{city_id}", handlers.CityPlaces)
 
 	// TODO
 	//router.Get("/cities/{city_id}", handlers.CityDetail) // детали города

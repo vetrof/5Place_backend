@@ -110,6 +110,9 @@ definitions:
     type: object
   models.Country:
     properties:
+      currency:
+        example: USD
+        type: string
       id:
         example: 1
         type: integer
@@ -121,6 +124,8 @@ definitions:
     properties:
       cityName:
         example: Almaty
+        type: string
+      currency:
         type: string
       desc:
         example: Famous hill with panoramic view of Almaty city
@@ -144,6 +149,12 @@ definitions:
         items:
           type: string
         type: array
+      price:
+        example: 42
+        type: integer
+      type:
+        example: monument
+        type: string
     type: object
 host: localhost:8080
 info:

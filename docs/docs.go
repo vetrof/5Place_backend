@@ -550,6 +550,10 @@ const docTemplate = `{
         "models.Country": {
             "type": "object",
             "properties": {
+                "currency": {
+                    "type": "string",
+                    "example": "USD"
+                },
                 "id": {
                     "type": "integer",
                     "example": 1
@@ -566,6 +570,9 @@ const docTemplate = `{
                 "cityName": {
                     "type": "string",
                     "example": "Almaty"
+                },
+                "currency": {
+                    "type": "string"
                 },
                 "desc": {
                     "type": "string",
@@ -596,6 +603,14 @@ const docTemplate = `{
                         "photo1.jpg",
                         "photo2.jpg"
                     ]
+                },
+                "price": {
+                    "type": "integer",
+                    "example": 42
+                },
+                "type": {
+                    "type": "string",
+                    "example": "monument"
                 }
             }
         }

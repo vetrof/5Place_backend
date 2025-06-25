@@ -25,7 +25,7 @@ type Place struct {
 	Desc     string   `json:"desc" example:"Famous hill with panoramic view of Almaty city"`
 	Distance float64  `json:"distance" example:"1245.67"`
 	Type     string   `json:"type" example:"monument"`
-	Price    *int     `json:"price" example:"NULL:unknown, 0:free, 42"`
+	Price    *int     `json:"price" example:"42"`
 	Currency string   `json:"currency"`
 	Photos   []string `json:"photos" example:"photo1.jpg,photo2.jpg"`
 }
