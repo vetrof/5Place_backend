@@ -79,19 +79,19 @@ func CityPlaces(id int) []models.Place {
 }
 
 // Get All Places for city возвращает список мест для города
-func PlaceDetail(id int) []models.Place {
+func PlaceDetail(id int) *models.Place {
 	if DB == nil {
 		log.Println("Error: repository not initialized")
 		return nil
 	}
 
-	places, err := DB.GetPlaceDetail(id)
+	place, err := DB.GetPlaceDetail(id)
 	if err != nil {
-		log.Printf("Error finding nearby places: %v", err)
+		log.Printf("Error finding place: %v", err)
 		return nil
 	}
 
-	return places
+	return &place
 }
 
 func RandomPlaces(countryId *int64, cityId *int64) []models.Place {

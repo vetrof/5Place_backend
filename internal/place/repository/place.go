@@ -2,6 +2,7 @@ package repository
 
 import (
 	"5Place/internal/place/models"
+	"database/sql"
 	"fmt"
 	"os"
 )
@@ -43,52 +44,45 @@ func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64
 	return places, nil
 }
 
-// PlaceDetail
-func (db *PostgresDB) GetPlaceDetail(placeID int) ([]models.Place, error) {
-	// Простой запрос без сортировки по расстоянию
+// GetPlaceDetail возвращает подробную информацию об одном месте по его ID
+func (db *PostgresDB) GetPlaceDetail(placeID int) (models.Place, error) {
 	query := `
-        SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr
+        SELECT t.name, p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr, p.price, country.currency
         FROM app_place p
         JOIN app_city c ON p.city_id = c.id
+        JOIN app_country country ON c.country_id = c.id
+        JOIN app_place_type t ON p.type_id = t.id
         WHERE p.id = $1
-        ORDER BY p.name ASC
-        LIMIT 20`
+    `
 
-	rows, err := db.DB.Query(query, placeID)
+	var place models.Place
+	var cityName string
+	var geomText string
+
+	photos, _ := db.GetPhotosByPlaceID(placeID)
+
+	err := db.DB.QueryRow(query, placeID).Scan(
+		&place.Type,
+		&place.ID,
+		&cityName,
+		&place.Name,
+		&geomText,
+		&place.Desc,
+		&place.Price,
+		&place.Currency,
+	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to query places: %w", err)
-	}
-	defer rows.Close()
-
-	var places []models.Place
-	for rows.Next() {
-		var place models.Place
-		var cityName string
-		var geomText string
-
-		err := rows.Scan(
-			&place.ID,
-			&cityName,
-			&place.Name,
-			&geomText,
-			&place.Desc, // предполагаю что поле называется Description
-		)
-		if err != nil {
-			return nil, fmt.Errorf("failed to scan place: %w", err)
+		if err == sql.ErrNoRows {
+			return models.Place{}, fmt.Errorf("place with ID %d not found", placeID)
 		}
-
-		// Если нужно сохранить название города в структуре
-		place.CityName = cityName
-		place.Geom = geomText // или парсить геометрию если нужно
-
-		places = append(places, place)
+		return models.Place{}, fmt.Errorf("failed to query place detail: %w", err)
 	}
 
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("error iterating places: %w", err)
-	}
+	place.CityName = cityName
+	place.Geom = geomText
+	place.Photos = photos
 
-	return places, nil
+	return place, nil
 }
 
 // GetAllCityPlaces выводит все места города

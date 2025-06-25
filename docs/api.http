@@ -46,7 +46,7 @@ GET {{domain}}/api/v1/place/places/random
 GET {{domain}}/api/v1/place/places/random?country=1
 
 ### random places city
-GET {{domain}}/api/v1/place/places/random?city=2
+GET {{domain}}/api/v1/place/places/random?city=1
 
 ### places list in city
 GET {{domain}}/api/v1/place/places/city/1

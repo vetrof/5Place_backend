@@ -97,17 +97,16 @@ func (db *FakeRepository) GetAllCityPlaces(id int) ([]models.Place, error) {
 }
 
 // GetAllCityPlaces выводит все места города
-func (db *FakeRepository) GetPlaceDetail(id int) ([]models.Place, error) {
-	return []models.Place{
-		{
-			ID:       1,
-			CityName: "Астана",
-			Name:     "central park",
-			Geom:     "POINT(71.419953 51.154506)",
-			Desc:     "центральный парк Астаны",
-			Distance: 150.25,
-			Photos:   []string{"https://astana.citypass.kz/wp-content/uploads/7db97aa358c9dcf7b27cd405bceba5e3.jpeg"},
-		},
+func (db *FakeRepository) GetPlaceDetail(id int) (models.Place, error) {
+	return models.Place{
+
+		ID:       1,
+		CityName: "Астана",
+		Name:     "central park",
+		Geom:     "POINT(71.419953 51.154506)",
+		Desc:     "центральный парк Астаны",
+		Distance: 150.25,
+		Photos:   []string{"https://astana.citypass.kz/wp-content/uploads/7db97aa358c9dcf7b27cd405bceba5e3.jpeg"},
 	}, nil
 }
 

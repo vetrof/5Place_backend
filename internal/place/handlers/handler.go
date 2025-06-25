@@ -222,7 +222,7 @@ func PlaceDetail(w http.ResponseWriter, r *http.Request) {
 	// передаем координаты в сервисный слой и ожидаем список мест
 	cityPlaces := services.PlaceDetail(id)
 
-	response := ResponseGeneric[[]models.Place, ResponseMeta]{
+	response := ResponseGeneric[*models.Place, ResponseMeta]{
 		Data: cityPlaces,
 		Meta: ResponseMeta{},
 	}

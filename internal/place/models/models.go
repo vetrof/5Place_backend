@@ -2,8 +2,9 @@ package models
 
 // Country представляет страну
 type Country struct {
-	ID   int    `json:"id" example:"1"`
-	Name string `json:"name" example:"Kazakhstan"`
+	ID       int    `json:"id" example:"1"`
+	Name     string `json:"name" example:"Kazakhstan"`
+	Currency string `json:"currency" example:"USD"`
 }
 
 // City представляет город
@@ -23,6 +24,9 @@ type Place struct {
 	Geom     string   `json:"geom" example:"POINT(76.9572 43.2316)"`
 	Desc     string   `json:"desc" example:"Famous hill with panoramic view of Almaty city"`
 	Distance float64  `json:"distance" example:"1245.67"`
+	Type     string   `json:"type" example:"monument"`
+	Price    *int     `json:"price" example:"NULL:unknown, 0:free, 42"`
+	Currency string   `json:"currency"`
 	Photos   []string `json:"photos" example:"photo1.jpg,photo2.jpg"`
 }
 
