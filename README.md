@@ -82,8 +82,9 @@
 
 ### 🔐 Переменные окружения (`.env`)
 
-```env
-REPO=fake
+env main project
+```env main project
+#REPO=fake
 
 DB_HOST=localhost
 DB_PORT=55000
@@ -92,6 +93,29 @@ DB_NAME=place5
 DB_PASSWORD=postgrespw
 DB_SCHEMA=public
 PORT=8080
+
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-change-in-production-12345
+JWT_EXPIRATION_HOURS=24
+```
+env django admin
+```env django admin
+HOST=localhost:9000
+
+DB_HOST=db
+DB_PORT=5432
+DB_USER=postgres
+DB_NAME=place5
+DB_PASSWORD=postgrespw
+DB_SCHEMA=public
+
+AWS_ACCESS_KEY_ID=minioadmin
+AWS_SECRET_ACCESS_KEY=minioadmin
+AWS_STORAGE_BUCKET_NAME=5place-files
+AWS_S3_ENDPOINT_URL=http://minio:9000
+AWS_S3_FILE_OVERWRITE=False
+AWS_S3_ADDRESSING_STYLE=path
+AWS_DEFAULT_ACL=None
 ```
 
 если в .env REPO=fake то базу запускать ненужно
@@ -246,7 +270,7 @@ GET {{domain}}/api/v1/place/places/city/1
 
 ```
 ### all cities
-GET {{domain}}/place/cities
+GET {{domain}}/api/v1//place/cities
 ```
 ```json
 {
@@ -273,7 +297,7 @@ GET {{domain}}/place/cities
 
 ```
 ### near 5 places
-GET {{domain}}/place/places/near?long=71.408771&lat=51.162030
+GET {{domain}}/api/v1//place/places/near?long=71.408771&lat=51.162030
 ```
 ```json
 {
@@ -315,7 +339,7 @@ GET {{domain}}/place/places/near?long=71.408771&lat=51.162030
 
 ```
 ### place detail
-GET {{domain}}/place/places/1
+GET {{domain}}/api/v1//place/places/1
 ```
 ```json
 {
@@ -344,7 +368,7 @@ GET {{domain}}/place/places/1
 
 ```
 ### places list in city
-GET {{domain}}/place/places/city/1
+GET {{domain}}/api/v1//place/places/city/1
 ```
 ```json
 {
