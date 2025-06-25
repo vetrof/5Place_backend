@@ -127,6 +127,13 @@ go install github.com/pressly/goose/v3/cmd/goose@latest
 goose -dir migrations create create_users_table sql
 goose -dir migrations postgres "postgres://postgres:postgrespw@localhost:55000/place5?sslmode=disable&search_path=public" up
 ```
+
+## генерация swagger
+```json
+swag init -g cmd/main.go       
+
+```
+
 ---
 
 ## 🧪 Наполнение базы для тестов

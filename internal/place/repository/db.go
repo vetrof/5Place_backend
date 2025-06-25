@@ -60,3 +60,8 @@ func NewPostgresDB() (*PostgresDB, error) {
 func (p *PostgresDB) Close() error {
 	return p.DB.Close()
 }
+
+// GetDB возвращает указатель на базу данных для использования в других пакетах
+func (p *PostgresDB) GetDB() *sql.DB {
+	return p.DB
+}

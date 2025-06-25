@@ -22,9 +22,9 @@
     "host": "localhost:5555",
     "basePath": "/",
     "paths": {
-        "/place/cities/country/{country_id}": {
-            "get": {
-                "description": "Возвращает список городов для указанной страны",
+        "/auth/login": {
+            "post": {
+                "description": "Авторизует пользователя и возвращает JWT токен",
                 "consumes": [
                     "application/json"
                 ],
@@ -32,13 +32,155 @@
                     "application/json"
                 ],
                 "tags": [
+                    "auth"
+                ],
+                "summary": "Авторизация пользователя",
+                "parameters": [
+                    {
+                        "description": "Данные для входа",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/profile": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Возвращает информацию о текущем пользователе",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Получить профиль пользователя",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Создает нового пользователя в системе",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Регистрация нового пользователя",
+                "parameters": [
+                    {
+                        "description": "Данные для регистрации",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/auth.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/place/cities/{country_id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
                     "cities"
                 ],
-                "summary": "Получить города по стране",
+                "summary": "Получить список городов по ID страны",
                 "parameters": [
                     {
                         "type": "integer",
-                        "example": 1,
                         "description": "ID страны",
                         "name": "country_id",
                         "in": "path",
@@ -53,66 +195,26 @@
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Неверный ID",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "string"
                         }
                     }
                 }
             }
         },
-        "/place/countries": {
+        "/place/city/{city_id}": {
             "get": {
-                "description": "Возвращает список всех доступных стран",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "countries"
-                ],
-                "summary": "Получить список стран",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Country-handlers_ResponseMeta"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/place/places/city/{city_id}": {
-            "get": {
-                "description": "Возвращает список всех мест в указанном городе",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "places"
                 ],
-                "summary": "Получить места в городе",
+                "summary": "Получить все места в городе",
                 "parameters": [
                     {
                         "type": "integer",
-                        "example": 1,
                         "description": "ID города",
                         "name": "city_id",
                         "in": "path",
@@ -127,157 +229,45 @@
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Неверный ID",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "string"
                         }
                     }
                 }
             }
         },
-        "/place/places/near": {
+        "/place/countries": {
             "get": {
-                "description": "Возвращает места в указанном радиусе от координат",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "places"
+                    "countries"
                 ],
-                "summary": "Найти места поблизости",
-                "parameters": [
-                    {
-                        "type": "number",
-                        "example": 43.222,
-                        "description": "Широта",
-                        "name": "lat",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "number",
-                        "example": 76.8512,
-                        "description": "Долгота",
-                        "name": "long",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "example": 10,
-                        "description": "Максимальное количество результатов (1-100)",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "default": 5000,
-                        "example": 5000,
-                        "description": "Радиус поиска в метрах (1-50000)",
-                        "name": "radius",
-                        "in": "query"
-                    }
-                ],
+                "summary": "Получить список стран",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Country-handlers_ResponseMeta"
                         }
                     }
                 }
             }
         },
-        "/place/places/random": {
+        "/place/detail/{place_id}": {
             "get": {
-                "description": "Возвращает случайные места с возможностью фильтрации по стране или городу",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "places"
                 ],
-                "summary": "Получить случайные места",
+                "summary": "Получить детальную информацию о месте",
                 "parameters": [
                     {
                         "type": "integer",
-                        "example": 1,
-                        "description": "ID страны для фильтрации",
-                        "name": "country",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "example": 1,
-                        "description": "ID города для фильтрации",
-                        "name": "city",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/place/places/{place_id}": {
-            "get": {
-                "description": "Возвращает подробную информацию о месте по его ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "places"
-                ],
-                "summary": "Получить детали места",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "example": 1,
                         "description": "ID места",
                         "name": "place_id",
                         "in": "path",
@@ -292,15 +282,101 @@
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Неверный ID",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/place/near": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "places"
+                ],
+                "summary": "Найти места рядом с координатами",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Широта",
+                        "name": "lat",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Долгота",
+                        "name": "long",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Максимальное количество (1-100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Радиус поиска в метрах (по умолчанию 5000)",
+                        "name": "radius",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "400": {
+                        "description": "Invalid lat or long",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/place/random": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "places"
+                ],
+                "summary": "Получить случайные места",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID страны",
+                        "name": "country",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID города",
+                        "name": "city",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseGeneric-array_models_Place-handlers_ResponseMeta"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid query parameters",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -308,6 +384,72 @@
         }
     },
     "definitions": {
+        "auth.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/auth.User"
+                }
+            }
+        },
+        "auth.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                }
+            }
+        },
+        "auth.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 3
+                }
+            }
+        },
+        "auth.User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.Coordinates": {
             "type": "object",
             "properties": {
@@ -316,15 +458,6 @@
                 },
                 "lon": {
                     "type": "number"
-                }
-            }
-        },
-        "handlers.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string",
-                    "example": "Invalid parameter"
                 }
             }
         },
@@ -465,7 +598,19 @@
             }
         }
     },
+    "securityDefinitions": {
+        "Bearer": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
     "tags": [
+        {
+            "description": "Операции авторизации и аутентификации",
+            "name": "auth"
+        },
         {
             "description": "Операции со странами",
             "name": "countries"

@@ -27,6 +27,12 @@ type Coordinates struct {
 	Lon float64 `json:"lon"`
 }
 
+// Countries godoc
+// @Summary Получить список стран
+// @Tags countries
+// @Produce json
+// @Success 200 {object} ResponseGeneric[[]models.Country, ResponseMeta]
+// @Router /place/countries [get]
 func Countries(w http.ResponseWriter, r *http.Request) {
 
 	countries := services.GetCountries()
@@ -43,6 +49,14 @@ func Countries(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Cities godoc
+// @Summary Получить список городов по ID страны
+// @Tags cities
+// @Param country_id path int true "ID страны"
+// @Produce json
+// @Success 200 {object} ResponseGeneric[[]models.City, ResponseMeta]
+// @Failure 400 {string} string "Неверный ID"
+// @Router /place/cities/{country_id} [get]
 func Cities(w http.ResponseWriter, r *http.Request) {
 
 	idStr := chi.URLParam(r, "country_id")
@@ -66,6 +80,17 @@ func Cities(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// NearPlaces godoc
+// @Summary Найти места рядом с координатами
+// @Tags places
+// @Param lat query number true "Широта"
+// @Param long query number true "Долгота"
+// @Param limit query int false "Максимальное количество (1-100)"
+// @Param radius query number false "Радиус поиска в метрах (по умолчанию 5000)"
+// @Produce json
+// @Success 200 {object} ResponseGeneric[[]models.Place, ResponseMeta]
+// @Failure 400 {string} string "Invalid lat or long"
+// @Router /place/near [get]
 func NearPlaces(w http.ResponseWriter, r *http.Request) {
 
 	// берем координаты из квери-параметров
@@ -126,6 +151,15 @@ func NearPlaces(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// RandomPlaces godoc
+// @Summary Получить случайные места
+// @Tags places
+// @Param country query int false "ID страны"
+// @Param city query int false "ID города"
+// @Produce json
+// @Success 200 {object} ResponseGeneric[[]models.Place, ResponseMeta]
+// @Failure 400 {string} string "Invalid query parameters"
+// @Router /place/random [get]
 func RandomPlaces(w http.ResponseWriter, r *http.Request) {
 
 	var countryId *int64
@@ -168,6 +202,14 @@ func RandomPlaces(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// PlaceDetail godoc
+// @Summary Получить детальную информацию о месте
+// @Tags places
+// @Param place_id path int true "ID места"
+// @Produce json
+// @Success 200 {object} ResponseGeneric[[]models.Place, ResponseMeta]
+// @Failure 400 {string} string "Неверный ID"
+// @Router /place/detail/{place_id} [get]
 func PlaceDetail(w http.ResponseWriter, r *http.Request) {
 
 	idStr := chi.URLParam(r, "place_id")
@@ -193,6 +235,14 @@ func PlaceDetail(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// CityPlaces godoc
+// @Summary Получить все места в городе
+// @Tags places
+// @Param city_id path int true "ID города"
+// @Produce json
+// @Success 200 {object} ResponseGeneric[[]models.Place, ResponseMeta]
+// @Failure 400 {string} string "Неверный ID"
+// @Router /place/city/{city_id} [get]
 func CityPlaces(w http.ResponseWriter, r *http.Request) {
 
 	idStr := chi.URLParam(r, "city_id")

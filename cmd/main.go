@@ -15,6 +15,14 @@
 
 // @schemes http https
 
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
+
+// @tag.name auth
+// @tag.description Операции авторизации и аутентификации
+
 // @tag.name countries
 // @tag.description Операции со странами
 
@@ -27,16 +35,22 @@
 package main
 
 import (
+	"5Place/internal/auth"
 	repository2 "5Place/internal/place/repository"
 	"5Place/internal/place/repository/mocks"
 	placeRouter "5Place/internal/place/router"
-	userRouter "5Place/internal/place/router"
 	"5Place/internal/place/services"
-	"github.com/joho/godotenv"
-	httpSwagger "github.com/swaggo/http-swagger"
+	userRouter "5Place/internal/user/router"
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/joho/godotenv"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	_ "5Place/docs" // импорт сгенерированных swagger файлов
 )
@@ -48,8 +62,15 @@ func main() {
 		log.Printf("Warning: Error loading .env file: %v", err)
 	}
 
+	// инициализация JWT конфигурации
+	jwtConfig := &auth.JWTConfig{
+		SecretKey:       getEnvOrDefault("JWT_SECRET", "your-super-secret-jwt-key-change-in-production"),
+		ExpirationHours: getEnvIntOrDefault("JWT_EXPIRATION_HOURS", 24),
+	}
+
 	// инициализация репозитория
 	var repo repository2.Repository // интерфейс, который реализуют и PostgresDB, и FakeRepository
+	var db *sql.DB                  // для передачи в auth роуты
 
 	// проверяем переменную окружения REPO
 	// если она равна "fake", то используем мок репозиторий, иначе - реальный
@@ -57,6 +78,8 @@ func main() {
 	if r == "fake" {
 		repo = mocks.NewFakeRepository()
 		log.Println("Fake repository initialized")
+		// Для fake repo создаем пустое подключение к БД (JWT auth будет работать только с реальной БД)
+		log.Println("Warning: JWT auth will not work with fake repository")
 	} else {
 		pgRepo, err := repository2.NewPostgresDB()
 		if err != nil {
@@ -65,34 +88,97 @@ func main() {
 		defer pgRepo.Close()
 		log.Println("Postgres repository initialized")
 		repo = pgRepo
+
+		// Получаем подключение к БД для auth
+		db = pgRepo.GetDB()
 	}
 
-	// инициализация сервисного слоя и репозитория
+	// инициализация сервисного слоя
 	services.InitServices(repo)
 	log.Println("Services initialized successfully")
 
-	// объединяем роутеры
-	mux := http.NewServeMux()
-	mux.Handle("/place/", http.StripPrefix("/place", placeRouter.Router()))
-	mux.Handle("/user/", http.StripPrefix("/user", userRouter.Router()))
+	// создаем chi router
+	router := chi.NewRouter()
 
-	// Swagger endpoint
-	mux.Handle("/swagger/", httpSwagger.WrapHandler)
+	// базовые middleware
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.RequestID)
+
+	// настройка CORS для фронтенда
+	router.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	})
+
+	// настройка auth роутов (только если есть подключение к БД)
+	// добавляем роут для авторизации
+	if db != nil {
+		auth.SetupAuthRoutes(router, db, jwtConfig)
+		log.Println("Auth routes initialized")
+	}
+
+	// роуты по доменам
+	router.Route("/api/v1", func(r chi.Router) {
+		r.Mount("/place", placeRouter.Router())
+		r.Mount("/user", userRouter.Router())
+	})
+
+	// Swagger
+	router.Handle("/swagger/*", httpSwagger.WrapHandler)
 
 	// Health check endpoint
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+	router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
+		w.Write([]byte(`{"status":"OK","message":"Server is running"}`))
+	})
+
+	// API info endpoint
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"message":"5Place API","version":"1.0","swagger":"/swagger/"}`))
 	})
 
 	// Server init
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "5555"
-	}
+	port := getEnvOrDefault("PORT", "5555")
 	log.Printf("Starting server at port %s", port)
 	log.Printf("Swagger documentation available at: http://localhost:%s/swagger/", port)
-	if err := http.ListenAndServe(":"+port, mux); err != nil {
+	log.Printf("Health check available at: http://localhost:%s/health", port)
+	if db != nil {
+		log.Printf("Auth endpoints available at: http://localhost:%s/auth/", port)
+	}
+
+	if err := http.ListenAndServe(":"+port, router); err != nil {
 		log.Fatal("Error starting server:", err)
 	}
+}
+
+// getEnvOrDefault возвращает значение переменной окружения или значение по умолчанию
+func getEnvOrDefault(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+// getEnvIntOrDefault возвращает int значение переменной окружения или значение по умолчанию
+func getEnvIntOrDefault(key string, defaultValue int) int {
+	if value := os.Getenv(key); value != "" {
+		if intValue, err := strconv.Atoi(value); err == nil {
+			return intValue
+		}
+	}
+	return defaultValue
 }
