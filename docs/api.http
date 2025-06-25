@@ -37,7 +37,7 @@ GET {{domain}}/api/v1/place/cities/country/1
 GET {{domain}}/api/v1/place/near?long=71.408771&lat=51.162030&limit=5&radius=5000
 
 ### place detail
-GET {{domain}}/api/v1/place/detail/1
+GET {{domain}}/api/v1/place/detail/1?long=71.408771&lat=51.162030
 
 ### random places
 GET {{domain}}/api/v1/place/random
@@ -50,3 +50,6 @@ GET {{domain}}/api/v1/place/random?city=1
 
 ### places list in city
 GET {{domain}}/api/v1/place/city/1
+
+### favorite places
+GET {{domain}}/api/v1/place/favorite

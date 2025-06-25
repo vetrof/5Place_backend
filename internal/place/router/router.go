@@ -19,6 +19,7 @@ func Router() chi.Router {
 	router.Get("/random", handlers.RandomPlaces)
 	router.Get("/detail/{place_id}", handlers.PlaceDetail)
 	router.Get("/city/{city_id}", handlers.CityPlaces)
+	router.Get("/favorite", handlers.FavoritePlaces)
 
 	// TODO
 	//router.Get("/cities/{city_id}", handlers.CityDetail) // детали города

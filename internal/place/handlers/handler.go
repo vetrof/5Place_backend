@@ -212,6 +212,22 @@ func RandomPlaces(w http.ResponseWriter, r *http.Request) {
 // @Router /api/v1/place/detail/{place_id} [get]
 func PlaceDetail(w http.ResponseWriter, r *http.Request) {
 
+	// берем координаты из квери-параметров
+	latStr := r.URL.Query().Get("lat")
+	longStr := r.URL.Query().Get("long")
+
+	// из строки в числа
+	lat, err := strconv.ParseFloat(latStr, 64)
+	if err != nil {
+		http.Error(w, "Invalid lat parameter", http.StatusBadRequest)
+		return
+	}
+	lon, err := strconv.ParseFloat(longStr, 64)
+	if err != nil {
+		http.Error(w, "Invalid long parameter", http.StatusBadRequest)
+		return
+	}
+
 	idStr := chi.URLParam(r, "place_id")
 	id, err := strconv.Atoi(idStr) // конвертируем в int
 	if err != nil {
@@ -220,7 +236,7 @@ func PlaceDetail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// передаем координаты в сервисный слой и ожидаем список мест
-	cityPlaces := services.PlaceDetail(id)
+	cityPlaces := services.PlaceDetail(id, lat, lon)
 
 	response := ResponseGeneric[*models.Place, ResponseMeta]{
 		Data: cityPlaces,
@@ -254,6 +270,31 @@ func CityPlaces(w http.ResponseWriter, r *http.Request) {
 
 	// передаем координаты в сервисный слой и ожидаем список мест
 	cityPlaces := services.CityPlaces(id)
+
+	response := ResponseGeneric[[]models.Place, ResponseMeta]{
+		Data: cityPlaces,
+		Meta: ResponseMeta{},
+	}
+
+	// Сериализация и отправка ответа напрямую
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+
+}
+
+// FavoritePlaces godoc
+// @Summary Получить все места в избранном
+// @Tags places
+// @Produce json
+// @Success 200 {object} ResponseGeneric[[]models.Place, ResponseMeta]
+// @Failure 400 {string} string "Неверный ID"
+// @Router /api/v1/place/favorite [get]
+func FavoritePlaces(w http.ResponseWriter, r *http.Request) {
+
+	// передаем координаты в сервисный слой и ожидаем список мест
+	cityPlaces := services.FavoritePlaces()
 
 	response := ResponseGeneric[[]models.Place, ResponseMeta]{
 		Data: cityPlaces,

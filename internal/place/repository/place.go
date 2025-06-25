@@ -35,7 +35,9 @@ func (db *PostgresDB) GetPhotosByPlaceID(placeID int, limit int) ([]string, erro
 func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64) ([]models.Place, error) {
 	query := fmt.Sprintf(`
 		SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr, 
-		ST_Distance(p.geom::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography) AS distance
+		ST_Distance(p.geom::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography) AS distance,
+		ST_Y(p.geom::geometry) AS latitude,
+    	ST_X(p.geom::geometry) AS longitude
 		FROM app_place p
 		JOIN app_city c ON p.city_id = c.id
 		ORDER BY distance ASC
@@ -49,10 +51,12 @@ func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64
 	defer rows.Close()
 
 	var places []models.Place
+	var latVal, lngVal float64
 
 	for rows.Next() {
 		var p models.Place
-		if err := rows.Scan(&p.ID, &p.CityName, &p.Name, &p.Geom, &p.Desc, &p.Distance); err != nil {
+		if err := rows.Scan(&p.ID, &p.CityName, &p.Name, &p.Geom, &p.Desc, &p.Distance, &latVal,
+			&lngVal); err != nil {
 			return nil, fmt.Errorf("row scan error: %w", err)
 		}
 
@@ -61,6 +65,10 @@ func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64
 			return nil, err
 		}
 		p.Photos = photos
+		p.Coordinates = models.Coordinates{
+			Lat: latVal,
+			Lng: lngVal,
+		}
 
 		places = append(places, p)
 	}
@@ -69,9 +77,12 @@ func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64
 }
 
 // GetPlaceDetail возвращает подробную информацию об одном месте по его ID
-func (db *PostgresDB) GetPlaceDetail(placeID int) (models.Place, error) {
+func (db *PostgresDB) GetPlaceDetail(placeID int, lat, long float64) (models.Place, error) {
 	query := `
-        SELECT t.name, p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr, p.price, country.currency
+        SELECT t.name, p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr, p.price, country.currency,
+               ST_Distance(p.geom::geography, ST_SetSRID(ST_MakePoint($2, $3), 4326)::geography) AS distance,
+               ST_Y(p.geom::geometry) AS latitude,
+    			ST_X(p.geom::geometry) AS longitude
         FROM app_place p
         JOIN app_city c ON p.city_id = c.id
         JOIN app_country country ON c.country_id = c.id
@@ -80,21 +91,23 @@ func (db *PostgresDB) GetPlaceDetail(placeID int) (models.Place, error) {
     `
 
 	var place models.Place
-	var cityName string
-	var geomText string
-
+	var latVal, lngVal float64
 	photos, _ := db.GetPhotosByPlaceID(placeID, 10) // лимит фоток для карточки 10
 
-	err := db.DB.QueryRow(query, placeID).Scan(
+	err := db.DB.QueryRow(query, placeID, long, lat).Scan(
 		&place.Type,
 		&place.ID,
-		&cityName,
+		&place.CityName,
 		&place.Name,
-		&geomText,
+		&place.Geom,
 		&place.Desc,
 		&place.Price,
 		&place.Currency,
+		&place.Distance,
+		&latVal,
+		&lngVal,
 	)
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return models.Place{}, fmt.Errorf("place with ID %d not found", placeID)
@@ -102,8 +115,11 @@ func (db *PostgresDB) GetPlaceDetail(placeID int) (models.Place, error) {
 		return models.Place{}, fmt.Errorf("failed to query place detail: %w", err)
 	}
 
-	place.CityName = cityName
-	place.Geom = geomText
+	place.Coordinates = models.Coordinates{
+		Lat: latVal,
+		Lng: lngVal,
+	}
+
 	place.Photos = photos
 
 	return place, nil
@@ -176,6 +192,52 @@ func (db *PostgresDB) GetRandomPlaces(countryId *int64, cityId *int64) ([]models
 	query += "ORDER BY random() LIMIT 100"
 
 	rows, err := db.DB.Query(query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query places: %w", err)
+	}
+	defer rows.Close()
+
+	var places []models.Place
+	for rows.Next() {
+		var place models.Place
+		var cityName string
+		var geomText string
+
+		if err := rows.Scan(
+			&place.ID,
+			&cityName,
+			&place.Name,
+			&geomText,
+			&place.Desc,
+		); err != nil {
+			return nil, fmt.Errorf("failed to scan place: %w", err)
+		}
+
+		photos, err := db.GetPhotosByPlaceID(place.ID, 1) // задаем лимит фото для каждой карточки
+		if err != nil {
+			return nil, err
+		}
+		place.Photos = photos
+		place.CityName = cityName
+		place.Geom = geomText
+		places = append(places, place)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating places: %w", err)
+	}
+
+	return places, nil
+}
+
+func (db *PostgresDB) RepoFavoritesPlaces() ([]models.Place, error) {
+	query := `
+        SELECT p.id, c.name, p.name, ST_AsText(p.geom) as geom, p.descr
+        FROM app_place p
+        JOIN app_city c ON p.city_id = c.id
+    `
+
+	rows, err := db.DB.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query places: %w", err)
 	}

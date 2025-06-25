@@ -1,5 +1,11 @@
 package models
 
+// Coordinates представляет широту и долготу
+type Coordinates struct {
+	Lat float64 `json:"lat" example:"43.2316"`
+	Lng float64 `json:"lng" example:"76.9572"`
+}
+
 // Country представляет страну
 type Country struct {
 	ID       int    `json:"id" example:"1"`
@@ -18,16 +24,17 @@ type City struct {
 
 // Place представляет место/достопримечательность
 type Place struct {
-	ID       int      `json:"id" example:"1"`
-	CityName string   `json:"cityName" example:"Almaty"`
-	Name     string   `json:"name" example:"Kok-Tobe Hill"`
-	Geom     string   `json:"geom" example:"POINT(76.9572 43.2316)"`
-	Desc     string   `json:"desc" example:"Famous hill with panoramic view of Almaty city"`
-	Distance float64  `json:"distance" example:"1245.67"`
-	Type     string   `json:"type" example:"monument"`
-	Price    *int     `json:"price" example:"42"`
-	Currency string   `json:"currency" example:"USD"`
-	Photos   []string `json:"photos" example:"photo1.jpg,photo2.jpg"`
+	ID          int         `json:"id" example:"1"`
+	CityName    string      `json:"cityName" example:"Almaty"`
+	Name        string      `json:"name" example:"Kok-Tobe Hill"`
+	Geom        string      `json:"geom" example:"POINT(76.9572 43.2316)"`
+	Coordinates Coordinates `json:"coordinates"`
+	Desc        string      `json:"desc" example:"Famous hill with panoramic view of Almaty city"`
+	Distance    float64     `json:"distance" example:"1245.67"`
+	Type        string      `json:"type" example:"monument"`
+	Price       *int        `json:"price" example:"42"`
+	Currency    string      `json:"currency" example:"USD"`
+	Photos      []string    `json:"photos" example:"photo1.jpg,photo2.jpg"`
 }
 
 // Photo представляет фотографию места
