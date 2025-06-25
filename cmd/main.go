@@ -36,21 +36,20 @@ package main
 
 import (
 	"5Place/internal/auth"
+	"5Place/internal/config/utils"
 	repository2 "5Place/internal/place/repository"
 	"5Place/internal/place/repository/mocks"
 	placeRouter "5Place/internal/place/router"
 	"5Place/internal/place/services"
 	userRouter "5Place/internal/user/router"
 	"database/sql"
-	"log"
-	"net/http"
-	"os"
-	"strconv"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
 	httpSwagger "github.com/swaggo/http-swagger"
+	"log"
+	"net/http"
+	"os"
 
 	_ "5Place/docs" // импорт сгенерированных swagger файлов
 )
@@ -64,8 +63,8 @@ func main() {
 
 	// инициализация JWT конфигурации
 	jwtConfig := &auth.JWTConfig{
-		SecretKey:       getEnvOrDefault("JWT_SECRET", "your-super-secret-jwt-key-change-in-production"),
-		ExpirationHours: getEnvIntOrDefault("JWT_EXPIRATION_HOURS", 24),
+		SecretKey:       utils.GetEnvOrDefault("JWT_SECRET", "your-super-secret-jwt-key-change-in-production"),
+		ExpirationHours: utils.GetEnvIntOrDefault("JWT_EXPIRATION_HOURS", 24),
 	}
 
 	// инициализация репозитория
@@ -152,7 +151,7 @@ func main() {
 	})
 
 	// Server init
-	port := getEnvOrDefault("PORT", "5555")
+	port := utils.GetEnvOrDefault("PORT", "5555")
 	log.Printf("Starting server at port %s", port)
 	log.Printf("Swagger documentation available at: http://localhost:%s/swagger/", port)
 	log.Printf("Health check available at: http://localhost:%s/health", port)
@@ -163,22 +162,4 @@ func main() {
 	if err := http.ListenAndServe(":"+port, router); err != nil {
 		log.Fatal("Error starting server:", err)
 	}
-}
-
-// getEnvOrDefault возвращает значение переменной окружения или значение по умолчанию
-func getEnvOrDefault(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return defaultValue
-}
-
-// getEnvIntOrDefault возвращает int значение переменной окружения или значение по умолчанию
-func getEnvIntOrDefault(key string, defaultValue int) int {
-	if value := os.Getenv(key); value != "" {
-		if intValue, err := strconv.Atoi(value); err == nil {
-			return intValue
-		}
-	}
-	return defaultValue
 }
