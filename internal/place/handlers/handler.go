@@ -5,6 +5,7 @@ import (
 	"5Place/internal/place/services"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -292,19 +293,75 @@ func CityPlaces(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {string} string "Неверный ID"
 // @Router /api/v1/place/favorite [get]
 func FavoritePlaces(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		handleGetFavorites(w, r)
+	case http.MethodPost:
+		handlePostFavorites(w, r)
+	case http.MethodDelete:
+		handleDeleteFavorites(w, r)
+	default:
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+}
 
-	// передаем координаты в сервисный слой и ожидаем список мест
-	cityPlaces := services.FavoritePlaces()
+func handleGetFavorites(w http.ResponseWriter, r *http.Request) {
+
+	user_id := 1
+
+	cityPlaces := services.FavoritePlaces(user_id)
 
 	response := ResponseGeneric[[]models.Place, ResponseMeta]{
 		Data: cityPlaces,
 		Meta: ResponseMeta{},
 	}
 
-	// Сериализация и отправка ответа напрямую
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
+}
 
+func handlePostFavorites(w http.ResponseWriter, r *http.Request) {
+	// Проксируем POST-запрос в другой сервис (например, http://localhost:9000/favorites)
+	req, err := http.NewRequest(http.MethodPost, "http://localhost:9000/favorites", r.Body)
+	if err != nil {
+		http.Error(w, "Failed to create proxy request", http.StatusInternalServerError)
+		return
+	}
+
+	req.Header = r.Header // передаем заголовки
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		http.Error(w, "Failed to forward request", http.StatusBadGateway)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Проксируем статус и тело
+	w.WriteHeader(resp.StatusCode)
+	io.Copy(w, resp.Body)
+}
+
+func handleDeleteFavorites(w http.ResponseWriter, r *http.Request) {
+	// Проксируем POST-запрос в другой сервис (например, http://localhost:9000/favorites)
+	req, err := http.NewRequest(http.MethodPost, "http://localhost:9000/favorites", r.Body)
+	if err != nil {
+		http.Error(w, "Failed to create proxy request", http.StatusInternalServerError)
+		return
+	}
+
+	req.Header = r.Header // передаем заголовки
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		http.Error(w, "Failed to forward request", http.StatusBadGateway)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Проксируем статус и тело
+	w.WriteHeader(resp.StatusCode)
+	io.Copy(w, resp.Body)
 }

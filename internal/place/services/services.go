@@ -113,13 +113,13 @@ func RandomPlaces(countryId *int64, cityId *int64) []models.Place {
 	return places
 }
 
-func FavoritePlaces() []models.Place {
+func FavoritePlaces(user_id int) []models.Place {
 	if DB == nil {
 		log.Println("Error: repository not initialized")
 		return nil
 	}
 
-	places, err := DB.RepoFavoritesPlaces()
+	places, err := DB.RepoFavoritesPlaces(user_id)
 	if err != nil {
 		log.Printf("Error finding nearby places: %v", err)
 		return nil

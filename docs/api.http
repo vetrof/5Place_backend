@@ -51,5 +51,8 @@ GET {{domain}}/api/v1/place/random?city=1
 ### places list in city
 GET {{domain}}/api/v1/place/city/1
 
-### favorite places
+### get favorite places
 GET {{domain}}/api/v1/place/favorite
+
+### add favorite places
+POST {{domain}}/api/v1/place/favorite/1

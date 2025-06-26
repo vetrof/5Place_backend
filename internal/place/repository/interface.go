@@ -11,5 +11,5 @@ type Repository interface {
 	GetPlaceDetail(id int, lat, long float64) (models.Place, error)
 	GetCountries() ([]models.Country, error)
 	GetRandomPlaces(countryId *int64, cityId *int64) ([]models.Place, error)
-	RepoFavoritesPlaces() ([]models.Place, error)
+	RepoFavoritesPlaces(user_id int) ([]models.Place, error)
 }
