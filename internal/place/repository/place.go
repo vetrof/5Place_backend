@@ -232,12 +232,14 @@ func (db *PostgresDB) GetRandomPlaces(countryId *int64, cityId *int64) ([]models
 
 func (db *PostgresDB) RepoFavoritesPlaces(user_id int) ([]models.Place, error) {
 	query := `
-        SELECT place.id, c.name, place.name, ST_AsText(place.geom) as geom, place.descr
+        SELECT place.id, city.name, place.name, ST_AsText(place.geom) as geom, place.descr
         FROM app_place place
-        JOIN app_user user ON place.id = user.id
+        JOIN app_favorite favorite ON favorite.user_id = $1
+	    JOIN app_city city ON place.city_id = city.id
+        WHERE place.id = favorite.place_id
     `
 
-	rows, err := db.DB.Query(query)
+	rows, err := db.DB.Query(query, user_id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query places: %w", err)
 	}

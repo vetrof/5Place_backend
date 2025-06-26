@@ -124,7 +124,7 @@ func (db *FakeRepository) GetRandomPlaces(countryId *int64, cityId *int64) ([]mo
 	}, nil
 }
 
-func (db *FakeRepository) RepoFavoritesPlaces() ([]models.Place, error) {
+func (db *FakeRepository) RepoFavoritesPlaces(user_id int) ([]models.Place, error) {
 	return []models.Place{
 		{
 			ID:       1,
