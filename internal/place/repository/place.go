@@ -34,7 +34,7 @@ func (db *PostgresDB) GetPhotosByPlaceID(placeID int, limit int) ([]string, erro
 // GetNearPlaces находит места рядом с указанными координатами
 func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64) ([]models.Place, error) {
 	query := fmt.Sprintf(`
-		SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr, 
+		SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr,
 		ST_Distance(p.geom::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography) AS distance,
 		ST_Y(p.geom::geometry) AS latitude,
     	ST_X(p.geom::geometry) AS longitude
@@ -85,7 +85,7 @@ func (db *PostgresDB) GetPlaceDetail(placeID int, lat, long float64) (models.Pla
     			ST_X(p.geom::geometry) AS longitude
         FROM app_place p
         JOIN app_city c ON p.city_id = c.id
-        JOIN app_country country ON c.country_id = c.id
+        JOIN app_country country ON c.country_id = country.id
         JOIN app_place_type t ON p.type_id = t.id
         WHERE p.id = $1
     `
