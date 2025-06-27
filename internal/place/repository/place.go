@@ -79,16 +79,23 @@ func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64
 // GetPlaceDetail возвращает подробную информацию об одном месте по его ID
 func (db *PostgresDB) GetPlaceDetail(placeID int, lat, long float64) (models.Place, error) {
 	query := `
-        SELECT t.name, p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr, p.price, country.currency,
-               ST_Distance(p.geom::geography, ST_SetSRID(ST_MakePoint($2, $3), 4326)::geography) AS distance,
-               ST_Y(p.geom::geometry) AS latitude,
-    			ST_X(p.geom::geometry) AS longitude
-        FROM app_place p
-        JOIN app_city c ON p.city_id = c.id
-        JOIN app_country country ON c.country_id = country.id
-        JOIN app_place_type t ON p.type_id = t.id
-        WHERE p.id = $1
-    `
+    SELECT
+        t.name AS type_name,
+        p.id,
+        c.name AS city_name,
+        p.name AS place_name,
+        ST_AsText(p.geom) AS geom,
+        p.descr,
+        p.price,
+        country.currency,
+        ST_Distance(p.geom::geography, ST_SetSRID(ST_MakePoint($2, $3), 4326)::geography) AS distance,
+        ST_Y(p.geom::geometry) AS latitude,
+        ST_X(p.geom::geometry) AS longitude
+    FROM app_place p
+    JOIN app_city c ON p.city_id = c.id
+    JOIN app_country country ON c.country_id = country.id
+    JOIN app_place_type t ON p.type_id = t.id
+    WHERE p.id = $1`
 
 	var place models.Place
 	var latVal, lngVal float64
@@ -230,16 +237,14 @@ func (db *PostgresDB) GetRandomPlaces(countryId *int64, cityId *int64) ([]models
 	return places, nil
 }
 
-func (db *PostgresDB) RepoFavoritesPlaces(user_id int) ([]models.Place, error) {
+func (db *PostgresDB) RepoFavoritesPlaces() ([]models.Place, error) {
 	query := `
-        SELECT place.id, city.name, place.name, ST_AsText(place.geom) as geom, place.descr
-        FROM app_place place
-        JOIN app_favorite favorite ON favorite.user_id = $1
-	    JOIN app_city city ON place.city_id = city.id
-        WHERE place.id = favorite.place_id
+        SELECT p.id, c.name, p.name, ST_AsText(p.geom) as geom, p.descr
+        FROM app_place p
+        JOIN app_city c ON p.city_id = c.id
     `
 
-	rows, err := db.DB.Query(query, user_id)
+	rows, err := db.DB.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query places: %w", err)
 	}

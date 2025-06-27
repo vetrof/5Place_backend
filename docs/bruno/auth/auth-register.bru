@@ -1,0 +1,19 @@
+meta {
+  name: auth/register
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{domain}}/auth/register
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "username": "testuser",
+      "email": "test@example.com",
+      "password": "password123"
+    }
+}

@@ -1,0 +1,15 @@
+meta {
+  name: random places country
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{domain}}/api/v1/place/random?country=1
+  body: none
+  auth: inherit
+}
+
+params:query {
+  country: 1
+}
