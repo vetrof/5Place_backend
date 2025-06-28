@@ -19,7 +19,7 @@ func Router(jwtConfig *auth.JWTConfig) chi.Router {
 	router.Get("/detail/{place_id}", handlers.PlaceDetail)
 	router.Get("/city/{city_id}", handlers.CityPlaces)
 
-	// Защищённые пути:
+	// need token route:
 	router.Group(func(r chi.Router) {
 		r.Use(auth.JWTMiddleware(jwtConfig))
 		r.Get("/favorite", handlers.FavoritePlaces)
