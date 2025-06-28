@@ -16,3 +16,26 @@ body:json {
     "password": "password123"
   }
 }
+
+script:post-response {
+  // автоматически парсится JSON:
+  const data = res.body;
+  
+  // сохраняем в окружении (успешно работает)
+  bru.setEnvVar("token", data.token);
+  
+  
+  
+  
+  
+}
+
+tests {
+  test("статус 200 и корректный body", function() {
+    const data = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(data).to.have.property("token");
+    expect(data.user).to.have.property("email").that.is.a("string");
+  });
+  
+}
