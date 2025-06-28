@@ -38,7 +38,6 @@ import (
 	"5Place/internal/auth"
 	"5Place/internal/config/utils"
 	repository2 "5Place/internal/place/repository"
-	"5Place/internal/place/repository/mocks"
 	placeRouter "5Place/internal/place/router"
 	"5Place/internal/place/services"
 	userRouter "5Place/internal/user/router"
@@ -75,7 +74,7 @@ func main() {
 	// если она равна "fake", то используем мок репозиторий, иначе - реальный
 	r := os.Getenv("REPO")
 	if r == "fake" {
-		repo = mocks.NewFakeRepository()
+		repo = repository2.NewFakeRepository()
 		log.Println("Fake repository initialized")
 		// Для fake repo создаем пустое подключение к БД (JWT auth будет работать только с реальной БД)
 		log.Println("Warning: JWT auth will not work with fake repository")

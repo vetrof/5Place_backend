@@ -1,4 +1,4 @@
-package mocks
+package repository
 
 import (
 	"5Place/internal/place/models"
