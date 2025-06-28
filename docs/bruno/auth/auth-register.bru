@@ -1,7 +1,7 @@
 meta {
   name: auth/register
   type: http
-  seq: 2
+  seq: 1
 }
 
 post {
@@ -13,7 +13,12 @@ post {
 body:json {
   {
       "username": "testuser",
-      "email": "test@example.com",
+      "email": "test1@example.com",
       "password": "password123"
     }
+}
+
+script:post-response {
+  
+  
 }
