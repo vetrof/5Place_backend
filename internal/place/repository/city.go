@@ -8,8 +8,8 @@ import (
 func (db *PostgresDB) GetAllCities(country_id int) ([]models.City, error) {
 	fmt.Println("country_id -->> ", country_id)
 
-	query := fmt.Sprintf(`
-	SELECT 
+	query := `
+	SELECT
 		c.id,
 		c.name,
 		ST_AsText(c.geom) as geom,
@@ -22,7 +22,7 @@ func (db *PostgresDB) GetAllCities(country_id int) ([]models.City, error) {
 	GROUP BY c.id, c.name, c.geom, co.name
 	ORDER BY c.id
 	LIMIT 20
-`)
+`
 
 	rows, err := db.DB.Query(query, country_id)
 	if err != nil {

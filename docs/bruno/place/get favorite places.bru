@@ -1,0 +1,11 @@
+meta {
+  name: get favorite places
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{domain}}/api/v1/place/favorite
+  body: none
+  auth: inherit
+}

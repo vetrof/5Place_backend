@@ -129,7 +129,7 @@ func main() {
 
 	// роуты по доменам
 	router.Route("/api/v1", func(r chi.Router) {
-		r.Mount("/place", placeRouter.Router())
+		r.Mount("/place", placeRouter.Router(jwtConfig))
 		r.Mount("/user", userRouter.Router())
 	})
 
@@ -150,7 +150,6 @@ func main() {
 		w.Write([]byte(`{"message":"5Place API","version":"1.0","swagger":"/swagger/"}`))
 	})
 
-	// Server init
 	port := utils.GetEnvOrDefault("PORT", "5555")
 	log.Printf("Starting server at port %s", port)
 	log.Printf("Swagger documentation available at: http://localhost:%s/swagger/", port)
@@ -159,6 +158,7 @@ func main() {
 		log.Printf("Auth endpoints available at: http://localhost:%s/auth/", port)
 	}
 
+	// Server init
 	if err := http.ListenAndServe(":"+port, router); err != nil {
 		log.Fatal("Error starting server:", err)
 	}

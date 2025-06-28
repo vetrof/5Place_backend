@@ -4,14 +4,13 @@ import (
 	"5Place/internal/place/models"
 	"database/sql"
 	"fmt"
-	"os"
 )
 
-// функция для получения фото к месту
+// GetPhotosByPlaceID функция для получения фото к месту
 func (db *PostgresDB) GetPhotosByPlaceID(placeID int, limit int) ([]string, error) {
-	query := fmt.Sprintf(`
-		SELECT image FROM %s.app_photo WHERE place_id = $1 LIMIT $2
-	`, os.Getenv("DB_SCHEMA"))
+	query := `
+		SELECT image FROM app_photo WHERE place_id = $1 LIMIT $2
+	`
 
 	rows, err := db.DB.Query(query, placeID, limit)
 	if err != nil {
@@ -33,7 +32,7 @@ func (db *PostgresDB) GetPhotosByPlaceID(placeID int, limit int) ([]string, erro
 
 // GetNearPlaces находит места рядом с указанными координатами
 func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64) ([]models.Place, error) {
-	query := fmt.Sprintf(`
+	query := `
 		SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr,
 		ST_Distance(p.geom::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography) AS distance,
 		ST_Y(p.geom::geometry) AS latitude,
@@ -42,7 +41,7 @@ func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64
 		JOIN app_city c ON p.city_id = c.id
 		ORDER BY distance ASC
 		LIMIT 20
-	`)
+	`
 
 	rows, err := db.DB.Query(query, long, lat)
 	if err != nil {
@@ -79,16 +78,23 @@ func (db *PostgresDB) GetNearPlaces(lat, long float64, limit int, radius float64
 // GetPlaceDetail возвращает подробную информацию об одном месте по его ID
 func (db *PostgresDB) GetPlaceDetail(placeID int, lat, long float64) (models.Place, error) {
 	query := `
-        SELECT t.name, p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr, p.price, country.currency,
-               ST_Distance(p.geom::geography, ST_SetSRID(ST_MakePoint($2, $3), 4326)::geography) AS distance,
-               ST_Y(p.geom::geometry) AS latitude,
-    			ST_X(p.geom::geometry) AS longitude
-        FROM app_place p
-        JOIN app_city c ON p.city_id = c.id
-        JOIN app_country country ON c.country_id = country.id
-        JOIN app_place_type t ON p.type_id = t.id
-        WHERE p.id = $1
-    `
+    SELECT
+        t.name AS type_name,
+        p.id,
+        c.name AS city_name,
+        p.name AS place_name,
+        ST_AsText(p.geom) AS geom,
+        p.descr,
+        p.price,
+        country.currency,
+        ST_Distance(p.geom::geography, ST_SetSRID(ST_MakePoint($2, $3), 4326)::geography) AS distance,
+        ST_Y(p.geom::geometry) AS latitude,
+        ST_X(p.geom::geometry) AS longitude
+    FROM app_place p
+    JOIN app_city c ON p.city_id = c.id
+    JOIN app_country country ON c.country_id = country.id
+    JOIN app_place_type t ON p.type_id = t.id
+    WHERE p.id = $1`
 
 	var place models.Place
 	var latVal, lngVal float64
@@ -173,6 +179,7 @@ func (db *PostgresDB) GetAllCityPlaces(cityID int) ([]models.Place, error) {
 	return places, nil
 }
 
+// GetRandomPlaces возвращает случайные места
 func (db *PostgresDB) GetRandomPlaces(countryId *int64, cityId *int64) ([]models.Place, error) {
 	query := `
         SELECT p.id, c.name AS city_name, p.name, ST_AsText(p.geom) as geom, p.descr
@@ -230,14 +237,17 @@ func (db *PostgresDB) GetRandomPlaces(countryId *int64, cityId *int64) ([]models
 	return places, nil
 }
 
-func (db *PostgresDB) RepoFavoritesPlaces() ([]models.Place, error) {
+// RepoFavoritesPlaces возвращаем избранное юзера
+func (db *PostgresDB) RepoFavoritesPlaces(userId int) ([]models.Place, error) {
 	query := `
-        SELECT p.id, c.name, p.name, ST_AsText(p.geom) as geom, p.descr
-        FROM app_place p
-        JOIN app_city c ON p.city_id = c.id
+        SELECT place.id, city.name, place.name, ST_AsText(place.geom) as geom, place.descr
+        FROM app_place place
+        JOIN app_city city ON place.city_id = city.id
+		JOIN app_favorite favorite on place.id = favorite.place_id
+		WHERE favorite.user_id = $1
     `
 
-	rows, err := db.DB.Query(query)
+	rows, err := db.DB.Query(query, userId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query places: %w", err)
 	}
@@ -274,4 +284,32 @@ func (db *PostgresDB) RepoFavoritesPlaces() ([]models.Place, error) {
 	}
 
 	return places, nil
+}
+
+// RepoAddFavoritesPlaces добавляем место в избранное
+func (db *PostgresDB) RepoAddFavoritesPlaces(userId int, placeId int) ([]models.Place, error) {
+	query := `
+        INSERT INTO app_favorite (user_id, place_id)
+        VALUES ($1, $2)        ON CONFLICT (user_id, place_id) DO NOTHING
+    `
+
+	if _, err := db.DB.Exec(query, userId, placeId); err != nil {
+		return nil, fmt.Errorf("failed to add place to favorites: %w", err)
+	}
+
+	return db.RepoFavoritesPlaces(userId)
+}
+
+// RepoDeleteFavoritesPlaces удаляем из избранного место
+func (db *PostgresDB) RepoDeleteFavoritesPlaces(userId int, placeId int) ([]models.Place, error) {
+	query := `
+        DELETE FROM app_favorite
+        WHERE user_id = $1 AND place_id = $2
+    `
+
+	if _, err := db.DB.Exec(query, userId, placeId); err != nil {
+		return nil, fmt.Errorf("failed to add place to favorites: %w", err)
+	}
+
+	return db.RepoFavoritesPlaces(userId)
 }

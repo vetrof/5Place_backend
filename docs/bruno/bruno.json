@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "5Place",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

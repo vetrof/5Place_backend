@@ -7,12 +7,12 @@ import (
 
 func (db *PostgresDB) GetCountries() ([]models.Country, error) {
 
-	query := fmt.Sprintf(`
-	SELECT 
+	query := `
+	SELECT
 		c.id,
 		c.name
 	FROM app_country c
-`)
+`
 
 	rows, err := db.DB.Query(query)
 	if err != nil {
