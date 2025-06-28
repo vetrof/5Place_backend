@@ -129,7 +129,7 @@ func main() {
 
 	// роуты по доменам
 	router.Route("/api/v1", func(r chi.Router) {
-		r.Mount("/place", placeRouter.Router())
+		r.Mount("/place", placeRouter.Router(jwtConfig))
 		r.Mount("/user", userRouter.Router())
 	})
 

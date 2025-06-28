@@ -1,14 +1,15 @@
 package handlers
 
 import (
+	"5Place/internal/auth"
 	"5Place/internal/place/models"
 	"5Place/internal/place/services"
 	"encoding/json"
-	"github.com/go-chi/chi/v5"
-	"io"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type ResponseGeneric[T any, M any] struct {
@@ -293,23 +294,28 @@ func CityPlaces(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {string} string "Неверный ID"
 // @Router /api/v1/place/favorite [get]
 func FavoritePlaces(w http.ResponseWriter, r *http.Request) {
+
+	user, ok := auth.GetUserFromContext(r.Context())
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
 	switch r.Method {
 	case http.MethodGet:
-		handleGetFavorites(w, r)
+		handleGetFavorites(w, r, user)
 	case http.MethodPost:
-		handlePostFavorites(w, r)
+		handlePostFavorites(w, r, user)
 	case http.MethodDelete:
-		handleDeleteFavorites(w, r)
+		handleDeleteFavorites(w, r, user)
 	default:
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-func handleGetFavorites(w http.ResponseWriter, r *http.Request) {
+func handleGetFavorites(w http.ResponseWriter, r *http.Request, user auth.User) {
 
-	user_id := 1
-
-	cityPlaces := services.FavoritePlaces(user_id)
+	cityPlaces := services.FavoritePlaces(user.ID)
 
 	response := ResponseGeneric[[]models.Place, ResponseMeta]{
 		Data: cityPlaces,
@@ -322,46 +328,48 @@ func handleGetFavorites(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handlePostFavorites(w http.ResponseWriter, r *http.Request) {
-	// Проксируем POST-запрос в другой сервис (например, http://localhost:9000/favorites)
-	req, err := http.NewRequest(http.MethodPost, "http://localhost:9000/favorites", r.Body)
+func handlePostFavorites(w http.ResponseWriter, r *http.Request, user auth.User) {
+
+	// get placeId from url param
+	placeIdStr := chi.URLParam(r, "place_id")
+	placeId, err := strconv.Atoi(placeIdStr) // конвертируем в int
 	if err != nil {
-		http.Error(w, "Failed to create proxy request", http.StatusInternalServerError)
+		http.Error(w, "Неверный ID", http.StatusBadRequest)
 		return
 	}
 
-	req.Header = r.Header // передаем заголовки
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		http.Error(w, "Failed to forward request", http.StatusBadGateway)
-		return
-	}
-	defer resp.Body.Close()
+	cityPlaces := services.AddFavoritePlaces(user.ID, placeId)
 
-	// Проксируем статус и тело
-	w.WriteHeader(resp.StatusCode)
-	io.Copy(w, resp.Body)
+	response := ResponseGeneric[[]models.Place, ResponseMeta]{
+		Data: cityPlaces,
+		Meta: ResponseMeta{},
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
-func handleDeleteFavorites(w http.ResponseWriter, r *http.Request) {
-	// Проксируем POST-запрос в другой сервис (например, http://localhost:9000/favorites)
-	req, err := http.NewRequest(http.MethodPost, "http://localhost:9000/favorites", r.Body)
+func handleDeleteFavorites(w http.ResponseWriter, r *http.Request, user auth.User) {
+
+	// get placeId from url param
+	placeIdStr := chi.URLParam(r, "place_id")
+	placeId, err := strconv.Atoi(placeIdStr) // конвертируем в int
 	if err != nil {
-		http.Error(w, "Failed to create proxy request", http.StatusInternalServerError)
+		http.Error(w, "Неверный ID", http.StatusBadRequest)
 		return
 	}
 
-	req.Header = r.Header // передаем заголовки
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		http.Error(w, "Failed to forward request", http.StatusBadGateway)
-		return
-	}
-	defer resp.Body.Close()
+	cityPlaces := services.RepoDeleteFavoritesPlaces(user.ID, placeId)
 
-	// Проксируем статус и тело
-	w.WriteHeader(resp.StatusCode)
-	io.Copy(w, resp.Body)
+	response := ResponseGeneric[[]models.Place, ResponseMeta]{
+		Data: cityPlaces,
+		Meta: ResponseMeta{},
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }

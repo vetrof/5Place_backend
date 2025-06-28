@@ -137,3 +137,31 @@ func (db *FakeRepository) RepoFavoritesPlaces(user_id int) ([]models.Place, erro
 		},
 	}, nil
 }
+
+func (db *FakeRepository) RepoAddFavoritesPlaces(user_id int, place_id int) ([]models.Place, error) {
+	return []models.Place{
+		{
+			ID:       1,
+			CityName: "Астана",
+			Name:     "central park",
+			Geom:     "POINT(71.419953 51.154506)",
+			Desc:     "центральный парк Астаны",
+			Distance: 150.25,
+			Photos:   []string{"https://astana.citypass.kz/wp-content/uploads/7db97aa358c9dcf7b27cd405bceba5e3.jpeg"},
+		},
+	}, nil
+}
+
+func (db *FakeRepository) RepoDeleteFavoritesPlaces(user_id int, place_id int) ([]models.Place, error) {
+	return []models.Place{
+		{
+			ID:       1,
+			CityName: "Астана",
+			Name:     "central park",
+			Geom:     "POINT(71.419953 51.154506)",
+			Desc:     "центральный парк Астаны",
+			Distance: 150.25,
+			Photos:   []string{"https://astana.citypass.kz/wp-content/uploads/7db97aa358c9dcf7b27cd405bceba5e3.jpeg"},
+		},
+	}, nil
+}
