@@ -1,0 +1,18 @@
+meta {
+  name: near 5place
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{domain}}/api/v1/place/near?long=71.408771&lat=51.162030&limit=5&radius=5000
+  body: none
+  auth: none
+}
+
+query {
+  long: 71.408771
+  lat: 51.162030
+  limit: 5
+  radius: 5000
+}
